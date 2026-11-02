@@ -1,0 +1,407 @@
+<!doctype html>
+<html lang="ar">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>[hidden]{display:none!important}body{margin:0}img{max-width:100%}</style>
+</head>
+<body>
+<title>معرض أعمال منجية عادل</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&family=Readex+Pro:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: phone-first single column; a turquoise "page" card holds the story like a reader's book; tabs act as the reading journey */
+:root{
+  --teal:#0f8b8d; --teal-deep:#0a6466; --teal-soft:#d8f0ef;
+  --beige:#f5ecdc; --sand:#e9dcc3; --paper:#fffdf8;
+  --green:#1f4d3a; --ink:#17302a; --muted:#5d6f69;
+  --gold:#d9a441; --ok:#2e8b57; --bad:#c2553f; --line:#d9cfbd;
+  --en:"Lexend",system-ui,sans-serif; --ar:"Readex Pro","Tahoma",system-ui,sans-serif;
+  --bg:#f5ecdc;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --teal:#3fb8b9; --teal-deep:#7fd6d6; --teal-soft:#16393a; --beige:#1b2622; --sand:#26332e; --paper:#1f2b27;
+  --green:#9ed2b5; --ink:#eef4f1; --muted:#a6b8b1; --line:#34443e; --bg:#141c19; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --teal:#3fb8b9; --teal-deep:#7fd6d6; --teal-soft:#16393a; --beige:#1b2622; --sand:#26332e; --paper:#1f2b27;
+  --green:#9ed2b5; --ink:#eef4f1; --muted:#a6b8b1; --line:#34443e; --bg:#141c19; color-scheme:dark}
+html,body{background:var(--bg)}
+body{color:var(--ink);font-family:var(--en);font-size:16px;line-height:1.6;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 40px}
+.wrap{max-width:720px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+.ar{font-family:var(--ar);direction:rtl}
+button{font:inherit;cursor:pointer}
+button:focus-visible,.w:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+
+header.hero{background:var(--teal);color:#fff;border-radius:22px;padding:22px 20px 20px;display:flex;flex-direction:column;gap:6px;position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;inset:auto -40px -60px auto;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,.08)}
+.brand{display:flex;align-items:center;gap:10px}
+.brand svg{flex:none}
+.hero h1{font-size:2rem;margin:0;font-weight:700;letter-spacing:-.01em;text-wrap:balance}
+.hero .ar{font-size:1.05rem;margin:0;opacity:.95}
+.hero .by{font-size:.85rem;opacity:.85}
+
+.levels{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.lv{border:2px solid var(--line);background:var(--paper);color:var(--ink);border-radius:14px;padding:10px 6px;display:flex;flex-direction:column;align-items:center;gap:2px}
+.lv b{font-size:.95rem}.lv small{font-family:var(--ar);font-size:.75rem;color:var(--muted)}
+.lv[aria-pressed="true"]{border-color:var(--teal);background:var(--teal-soft)}
+.lv .dots{letter-spacing:2px;color:var(--gold)}
+
+nav.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;background:var(--sand);padding:6px;border-radius:16px}
+.tab{border:0;background:transparent;color:var(--green);border-radius:12px;padding:8px 2px;display:flex;flex-direction:column;align-items:center;font-weight:600;font-size:.9rem}
+.tab span.ar{font-size:.72rem;font-weight:500;color:var(--muted)}
+.tab[aria-selected="true"]{background:var(--paper);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+
+section.panel{background:var(--paper);border-radius:20px;padding:20px;display:flex;flex-direction:column;gap:14px;border:1px solid var(--line)}
+.panel h2{margin:0;font-size:1.3rem;color:var(--green)}
+.hint{font-family:var(--ar);direction:rtl;font-size:.88rem;color:var(--muted);margin:0}
+.scene{width:100%;max-width:100%;height:auto;border-radius:14px;display:block;background:var(--teal-soft)}
+.story{font-size:1.25rem;line-height:2;margin:0}
+.w{border-radius:6px;padding:1px 2px;transition:background .15s}
+.w.vocab{border-bottom:2px dotted var(--teal);cursor:pointer;font-weight:500}
+.w.on{background:var(--gold);color:#1b1b1b}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.btn{border:0;border-radius:12px;padding:10px 14px;font-weight:600;background:var(--teal);color:#fff;display:inline-flex;gap:6px;align-items:center}
+.btn.alt{background:var(--sand);color:var(--green)}
+.btn.gold{background:var(--gold);color:#1b1b1b}
+.gloss{background:var(--teal-soft);border-radius:14px;padding:12px 14px;display:flex;justify-content:space-between;gap:12px;align-items:center;min-height:56px}
+.gloss .en{font-weight:700;font-size:1.1rem}
+.gloss .ar{font-size:1.05rem}
+
+.picker{background:var(--green);color:#fff;border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:8px;align-items:center;text-align:center}
+.picker .who{font-family:var(--ar);font-size:1.15rem;min-height:1.6em}
+.picker .btn{background:var(--gold);color:#1b1b1b}
+
+.q{display:flex;flex-direction:column;gap:10px}
+.q p{margin:0;font-weight:600;font-size:1.1rem}
+.opts{display:grid;gap:8px}
+.opt{border:2px solid var(--line);background:var(--paper);color:var(--ink);text-align:left;border-radius:12px;padding:10px 12px;display:flex;gap:10px;align-items:center}
+.opt::before{content:"";width:18px;height:18px;border-radius:50%;border:2px solid var(--muted);flex:none}
+.opt.right{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 14%,var(--paper))}
+.opt.right::before{background:var(--ok);border-color:var(--ok)}
+.opt.wrong{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 12%,var(--paper))}
+.opt.wrong::before{background:var(--bad);border-color:var(--bad)}
+.progress{height:10px;background:var(--sand);border-radius:99px;overflow:hidden}
+.progress i{display:block;height:100%;background:var(--teal);width:0;transition:width .4s}
+.feedback{font-family:var(--ar);direction:rtl;min-height:1.5em;margin:0;font-weight:600}
+
+.slot{min-height:54px;border:2px dashed var(--teal);border-radius:14px;padding:8px;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.chip{border:0;background:var(--sand);color:var(--ink);border-radius:10px;padding:8px 12px;font-weight:600;font-size:1.05rem}
+.slot .chip{background:var(--teal);color:#fff}
+
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.kpi{background:var(--beige);border-radius:14px;padding:10px;display:flex;flex-direction:column;align-items:center;text-align:center}
+.kpi b{font-size:1.5rem;color:var(--teal-deep);font-variant-numeric:tabular-nums}
+.kpi span{font-family:var(--ar);font-size:.75rem;color:var(--muted)}
+.studs{display:flex;flex-direction:column;gap:8px}
+.stu{display:grid;grid-template-columns:110px 1fr 56px;gap:10px;align-items:center;font-size:.9rem}
+.stu .bar{height:12px;background:var(--sand);border-radius:99px;overflow:hidden}
+.stu .bar i{display:block;height:100%}
+.pill{font-family:var(--ar);font-size:.7rem;border-radius:99px;padding:2px 6px;text-align:center}
+.tag{font-family:var(--ar);direction:rtl;font-size:.75rem;background:var(--sand);color:var(--muted);border-radius:8px;padding:2px 8px;align-self:flex-start}
+
+.hero{direction:rtl}
+.eyebrow{font-family:var(--ar);font-size:.8rem;letter-spacing:.02em;opacity:.9}
+.eyebrow.dark{color:var(--teal-deep);font-weight:600;opacity:1}
+.badges{display:flex;flex-wrap:wrap;gap:6px}
+.badges span{background:rgba(255,255,255,.16);border-radius:99px;padding:3px 10px;font-size:.78rem}
+.hero .lead{font-size:1rem;line-height:1.9;margin:4px 0 0;max-width:60ch}
+.subj{display:flex;flex-wrap:wrap;gap:6px}
+.sb{border:2px solid var(--line);background:var(--paper);color:var(--green);border-radius:99px;padding:6px 14px;font-family:var(--ar);font-weight:600}
+.sb[aria-selected="true"]{background:var(--teal);border-color:var(--teal);color:#fff}
+.offers{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.offer{background:var(--beige);border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.offer b{color:var(--green);font-size:1rem}
+.offer span{font-size:.88rem;color:var(--muted);line-height:1.7}
+.offer.feat{background:var(--teal-soft);border:2px solid var(--teal)}
+.offer a{color:var(--teal-deep);font-weight:600;font-size:.88rem}
+.demo-head{display:flex;flex-direction:column;gap:4px;padding-top:6px;border-top:2px dashed var(--line)}
+.demo-head h2{margin:0;font-size:1.25rem;color:var(--green);text-wrap:balance}
+.demo{display:flex;flex-direction:column;gap:18px}
+.packs{display:grid;gap:10px}
+.pack{border-inline-start:4px solid var(--gold);background:var(--beige);border-radius:12px;padding:10px 14px;display:flex;flex-direction:column;gap:2px}
+.pack b{color:var(--green)}.pack span{font-size:.9rem;color:var(--muted)}
+.contact{display:flex;flex-wrap:wrap;gap:8px}
+.contact .btn{text-decoration:none}
+.btn.wa{background:#1f7a4d;color:#fff}
+footer{background:var(--green);color:#fff;border-radius:20px;padding:18px 20px;display:flex;flex-direction:column;gap:6px}
+footer .ar{margin:0}
+footer a{color:#fff;font-weight:600}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) footer,:root:not([data-theme="light"]) .picker{background:#1d3a2f}}
+:root[data-theme="dark"] footer,:root[data-theme="dark"] .picker{background:#1d3a2f}
+@media (max-width:420px){.hero h1{font-size:1.7rem}.stu{grid-template-columns:84px 1fr 50px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<div class="wrap">
+  <header class="hero ar">
+    <span class="eyebrow">معرض أعمال تفاعلي • Interactive Portfolio</span>
+    <h1 class="ar">الأستاذة منجية عادل</h1>
+    <p class="ar">معلمة وخبيرة تربوية في التعليم والذكاء الاصطناعي</p>
+    <div class="badges">
+      <span>38 سنة في الميدان</span><span>Google Gemini Certified Educator</span><span>One Million Prompters</span>
+    </div>
+    <p class="ar lead">أحوّل درسك إلى تجربة يعيشها الطالب: منصات تفاعلية، قصص مصوّرة وصوت، أوراق عمل بثلاثة مستويات، وفيديوهات سينمائية… كلها مصنوعة بالذكاء الاصطناعي وبعين معلمة خبيرة.</p>
+  </header>
+
+  <section class="panel ar" id="subjects">
+    <h2>اختاري مادتك لتري ماذا أصنع لك</h2>
+    <div class="subj" role="tablist" id="subjTabs">
+      <button class="sb" id="sb-en" data-s="en" aria-selected="true">English</button>
+      <button class="sb" id="sb-ar" data-s="ar" aria-selected="false">اللغة العربية</button>
+      <button class="sb" id="sb-is" data-s="is" aria-selected="false">التربية الإسلامية</button>
+      <button class="sb" id="sb-so" data-s="so" aria-selected="false">الاجتماعيات والهوية</button>
+      <button class="sb" id="sb-all" data-s="all" aria-selected="false">كل المواد</button>
+    </div>
+    <div class="offers" id="offers"></div>
+  </section>
+
+  <section class="panel ar" id="more">
+    <h2>وأيضًا لكل المواد</h2>
+    <div class="offers">
+      <div class="offer"><b>📝 الاختبارات والتقويم</b><span>اختبارات تشخيصية وقصيرة ونهائية، مع مفتاح إجابة وتوزيع درجات وجدول مهارات</span></div>
+      <div class="offer"><b>🩹 الخطط العلاجية الفردية</b><span>بعد التشخيص، لكل طالبة خطة وملزمة على مهارات تعثّرها بالتحديد، مع مدة زمنية واضحة</span></div>
+      <div class="offer"><b>🚀 الخطط الإثرائية</b><span>أنشطة تحدٍّ للمتميزات تنمّي التفكير والإبداع، دون أن يتوقف تقدّمهن</span></div>
+      <div class="offer"><b>🎮 الألعاب التعليمية</b><span>ألعاب تفاعلية على الدرس تُلعب في الصف أو البيت، مع اختيار عادل للمجموعات</span><a href="https://mongia-spec.github.io/reading-race/" target="_blank" rel="noopener">جرّبي لعبة «سباق القراءة» ←</a></div>
+      <div class="offer"><b>📖 كتب قصصية تفاعلية (Flipbook)</b><span>قصص تعليمية مصوّرة تُقلَّب صفحاتها كالكتاب الحقيقي، بصوت قراءة، تشرح الدرس بحكاية</span><a id="flipLink" href="#" hidden target="_blank" rel="noopener">اقرئي القصة ←</a></div>
+      <div class="offer feat"><b>🤖 منصة مُنظِّمتي AI</b><span>«يدك الثالثة في التعليم»: منصة للمعلمين تساعد في التشخيص والتخطيط والتحضير وتنظيم العمل بالذكاء الاصطناعي</span><a href="https://monazamati.com" target="_blank" rel="noopener">ادخلي منصة مُنظِّمتي ←</a></div>
+    </div>
+  </section>
+
+  <div class="demo-head ar">
+    <span class="eyebrow dark">جرّبي بنفسك الآن 👇</span>
+    <h2>Read &amp; Rise — منصة تطوير القراءة والكتابة بالإنجليزية</h2>
+    <p class="hint">العبي دور الطالبة: اسمعي القصة، اضغطي الكلمات، أجيبي الأسئلة، ثم رتّبي الجملة. وفي النهاية شاهدي ما تراه المعلمة.</p>
+  </div>
+
+  <div dir="ltr" class="demo">
+    <p class="hint" style="margin-bottom:8px">اختاري مستوى الطالب: النص نفسه بثلاثة مستويات (دعم • أساسي • إثراء)</p>
+    <div class="levels" role="group" aria-label="Level">
+      <button class="lv" id="lv0" data-l="0" aria-pressed="true"><span class="dots">●○○</span><b>Starter</b><small>دعم</small></button>
+      <button class="lv" id="lv1" data-l="1" aria-pressed="false"><span class="dots">●●○</span><b>Explorer</b><small>أساسي</small></button>
+      <button class="lv" id="lv2" data-l="2" aria-pressed="false"><span class="dots">●●●</span><b>Champion</b><small>إثراء</small></button>
+    </div>
+  </div>
+
+  <nav class="tabs" role="tablist">
+    <button class="tab" role="tab" id="t-read" data-p="read" aria-selected="true">Read<span class="ar">أقرأ</span></button>
+    <button class="tab" role="tab" id="t-quiz" data-p="quiz" aria-selected="false">Quiz<span class="ar">أفهم</span></button>
+    <button class="tab" role="tab" id="t-write" data-p="write" aria-selected="false">Write<span class="ar">أكتب</span></button>
+    <button class="tab" role="tab" id="t-teach" data-p="teach" aria-selected="false">Teacher<span class="ar">المعلمة</span></button>
+  </nav>
+
+  <!-- READ -->
+  <section class="panel" id="p-read">
+    <canvas class="scene" id="scene" width="640" height="300" aria-label="Story picture"></canvas>
+    <h2 id="storyTitle">The Red Kite</h2>
+    <p class="story" id="story" lang="en"></p>
+    <div class="row">
+      <button class="btn" id="playBtn">▶ Listen</button>
+      <button class="btn alt" id="slowBtn">🐢 Slow</button>
+      <button class="btn alt" id="stopBtn">■ Stop</button>
+    </div>
+    <p class="hint">اضغطي على أي كلمة منقّطة لسماع نطقها ومعرفة معناها بالعربية</p>
+    <div class="gloss" id="gloss"><span class="en">Tap a word</span><span class="ar">المعنى يظهر هنا</span></div>
+    <div class="picker">
+      <div class="ar" style="font-size:.85rem;opacity:.85">المنصة تختار، لا المعلمة</div>
+      <div class="who" id="who">من يقرأ الآن؟</div>
+      <button class="btn" id="pickBtn">🎲 Who reads now?</button>
+    </div>
+  </section>
+
+  <!-- QUIZ -->
+  <section class="panel" id="p-quiz" hidden>
+    <h2>Check your understanding</h2>
+    <div class="progress"><i id="qbar"></i></div>
+    <div class="q" id="qbox"></div>
+    <p class="feedback" id="qfb"></p>
+    <div class="row"><button class="btn" id="qnext" hidden>Next →</button></div>
+  </section>
+
+  <!-- WRITE -->
+  <section class="panel" id="p-write" hidden>
+    <h2>Build the sentence</h2>
+    <p class="hint">رتّبي الكلمات لتكوين جملة صحيحة من القصة. اضغطي على الكلمة لنقلها</p>
+    <div class="slot" id="slot" aria-label="Your sentence"></div>
+    <div class="row" id="bank"></div>
+    <div class="row">
+      <button class="btn" id="wcheck">✓ Check</button>
+      <button class="btn alt" id="wreset">↺ Reset</button>
+    </div>
+    <p class="feedback" id="wfb"></p>
+  </section>
+
+  <!-- TEACHER -->
+  <section class="panel" id="p-teach" hidden>
+    <h2>Class progress</h2>
+    <span class="tag">بيانات توضيحية لعرض الفكرة</span>
+    <div class="kpis">
+      <div class="kpi"><b>24</b><span>طالبة نشطة</span></div>
+      <div class="kpi"><b>78%</b><span>متوسط الفهم</span></div>
+      <div class="kpi"><b>+19%</b><span>تحسّن الطلاقة</span></div>
+    </div>
+    <div class="studs" id="studs"></div>
+    <p class="hint">كل طالبة تنتقل تلقائيًا للمستوى المناسب، والمعلمة ترى من تحتاج دعمًا بنظرة واحدة</p>
+  </section>
+
+  </div>
+
+  <section class="panel ar">
+    <h2>عروض خاصة للأقسام 🤝</h2>
+    <p class="hint">اشتركي مع زميلاتك في القسم، فتتوزّع التكلفة ويستفيد الجميع</p>
+    <div class="packs">
+      <div class="pack"><b>منصة مهارة للقسم</b><span>منصة قراءة أو كتابة على منهجكم، تستخدمها كل معلمات المادة مع طالباتهن</span></div>
+      <div class="pack"><b>مكتبة موارد مشتركة</b><span>عروض تفاعلية وأوراق عمل بمستويات وألعاب صفية لوحدات المنهج</span></div>
+      <div class="pack"><b>تحضير موحّد للمادة</b><span>تحضير بأسلوب واحد احترافي لكل دروس الوحدة، مع الوسائل وأوراق العمل</span></div>
+    </div>
+  </section>
+
+  <footer class="ar">
+    <p style="font-weight:700;font-size:1.2rem;margin:0">اطلبي عرضًا خاصًا لقسمك</p>
+    <p style="font-size:.92rem;opacity:.9;margin:0">الأسعار بالاتفاق المباشر بحسب المادة وعدد المعلمات والصفوف.</p>
+    <div class="contact">
+      <a class="btn wa" href="https://wa.me/96891744815?text=%D8%A7%D9%84%D8%B3%D9%84%D8%A7%D9%85%20%D8%B9%D9%84%D9%8A%D9%83%D9%85%20%D8%A3%D8%B3%D8%AA%D8%A7%D8%B0%D8%A9%20%D9%85%D9%86%D8%AC%D9%8A%D8%A9%D8%8C%20%D8%B4%D8%A7%D9%87%D8%AF%D8%AA%20%D8%B9%D8%B1%D8%B6%D9%83%20%D9%81%D9%8A%20%D8%A7%D9%84%D9%88%D8%B1%D8%B4%D8%A9%20%D9%88%D8%A3%D8%B1%D9%8A%D8%AF%20%D8%B9%D8%B1%D8%B6%D9%8B%D8%A7%20%D9%84%D9%82%D8%B3%D9%85%20" target="_blank" rel="noopener">واتساب: اطلبي عرضًا لقسمك</a>
+      <a class="btn gold" href="https://instagram.com/ostatha.mongia" target="_blank" rel="noopener">إنستغرام <span dir="ltr">@ostatha.mongia</span></a>
+    </div>
+    <p style="font-size:.9rem;margin:0">واتساب: <span dir="ltr" style="font-weight:700;user-select:all">+968 9174 4815</span></p>
+    <div hidden>
+    </div>
+    <p style="font-size:.8rem;opacity:.75;margin:0">كل ما في هذه الصفحة، حتى هذه الصفحة نفسها، مصنوع بالذكاء الاصطناعي.</p>
+  </footer>
+</div>
+
+<script>
+const LEVELS=[
+ {title:"The Red Kite",
+  text:"Sara has a red kite. The wind is strong today. The kite flies up, up, up! Oh no! The kite is stuck in a tall tree. Sara is sad. Her brother Ali is tall. He helps her. Now the kite is free. Sara smiles and says, \"Thank you, Ali!\"",
+  qs:[["What colour is the kite?","red",["blue","green","yellow"]],
+      ["Where is the kite stuck?","in a tree",["on a house","in the sea","on a car"]],
+      ["Who helps Sara?","her brother Ali",["her mother","her teacher","her friend"]],
+      ["How does Sara feel at the end?","happy",["sad","angry","tired"]]],
+  sent:"The kite is stuck in a tall tree."},
+ {title:"The Red Kite",
+  text:"On a windy afternoon, Sara took her red kite to the beach. The strong wind lifted it high above the waves. Suddenly, the string slipped from her hands and the kite landed in a tall palm tree. Sara felt worried. Her brother Ali climbed carefully and brought the kite down. Sara thanked him and held the string tightly this time.",
+  qs:[["Where did Sara fly her kite?","at the beach",["in the park","at school","in the garden"]],
+      ["Why did the kite fly away?","the string slipped",["the kite broke","Ali pulled it","it started to rain"]],
+      ["How did Sara feel when the kite was in the tree?","worried",["excited","bored","proud"]],
+      ["What did Sara learn?","to hold the string tightly",["to stay at home","to buy a new kite","to climb trees"]]],
+  sent:"The strong wind lifted it high above the waves."},
+ {title:"The Red Kite",
+  text:"The afternoon breeze was perfect, so Sara proudly carried her handmade red kite to the beach. Within seconds, the gusty wind carried it high above the sparkling waves. Unexpectedly, the string slipped through her fingers, and the kite became tangled in the branches of a palm tree. Disappointed but determined, Sara asked her brother Ali for help. He climbed patiently, untangled the string, and returned the kite. From that day on, Sara wrapped the string around her wrist before every flight.",
+  qs:[["Why was Sara proud of her kite?","she made it herself",["it was expensive","it was new","Ali gave it to her"]],
+      ["What does \"tangled\" mean in the story?","caught and twisted",["broken into pieces","painted again","flying higher"]],
+      ["Which word best describes Ali?","patient",["lazy","angry","scared"]],
+      ["What problem did Sara solve at the end?","losing the string",["the weak wind","the broken kite","the hot weather"]]],
+  sent:"Sara wrapped the string around her wrist before every flight."}
+];
+const VOCAB={kite:"طائرة ورقية",wind:"ريح",strong:"قوية",stuck:"عالقة",tall:"طويل",tree:"شجرة",brother:"أخ",helps:"يساعد",free:"حرّة",smiles:"تبتسم",windy:"عاصف",beach:"الشاطئ",lifted:"رفعَ",waves:"الأمواج",suddenly:"فجأة",string:"الخيط",slipped:"انزلق",palm:"نخلة",worried:"قلقة",climbed:"تسلّق",carefully:"بحذر",tightly:"بإحكام",breeze:"نسيم",proudly:"بفخر",handmade:"مصنوعة يدويًا",gusty:"عاصفة",sparkling:"متلألئة",unexpectedly:"على غير المتوقع",tangled:"تشابك",branches:"أغصان",disappointed:"خائبة الأمل",determined:"مصمّمة",patiently:"بصبر",untangled:"فكّ التشابك",wrapped:"لفّت",wrist:"معصم",flight:"طيران",sad:"حزينة"};
+let level=0, idx=0, score=0;
+const $=s=>document.querySelector(s);
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+
+function renderStory(){
+  const L=LEVELS[level]; $("#storyTitle").textContent=L.title;
+  const box=$("#story"); box.innerHTML="";
+  L.text.split(/(\s+)/).forEach(tok=>{
+    if(/^\s+$/.test(tok)){box.append(tok);return}
+    const s=document.createElement("span"); s.className="w"; s.textContent=tok;
+    const key=tok.toLowerCase().replace(/[^a-z]/g,"");
+    if(VOCAB[key]){s.classList.add("vocab");s.tabIndex=0;s.dataset.k=key;
+      const go=()=>{say(key,.8);$("#gloss").innerHTML=`<span class="en">${key}</span><span class="ar">${VOCAB[key]}</span>`};
+      s.onclick=go;s.onkeydown=e=>{if(e.key==="Enter")go()}}
+    box.append(s);
+  });
+  drawScene();
+}
+function say(t,rate){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang="en-GB";u.rate=rate||.9;speechSynthesis.speak(u);return u}catch(e){return null}}
+function readAll(rate){
+  const words=[...document.querySelectorAll("#story .w")];
+  const text=words.map(w=>w.textContent).join(" ");
+  const starts=[];let p=0;words.forEach(w=>{starts.push(p);p+=w.textContent.length+1});
+  const u=say(text,rate); if(!u)return;
+  u.onboundary=e=>{const i=starts.findLastIndex(s=>s<=e.charIndex);words.forEach(w=>w.classList.remove("on"));if(words[i])words[i].classList.add("on")};
+  u.onend=()=>words.forEach(w=>w.classList.remove("on"));
+}
+$("#playBtn").onclick=()=>readAll(.9);
+$("#slowBtn").onclick=()=>readAll(.65);
+$("#stopBtn").onclick=()=>{try{speechSynthesis.cancel()}catch(e){};document.querySelectorAll(".w.on").forEach(w=>w.classList.remove("on"))};
+
+/* fair rotating picker: groups take turns, each student once per round */
+const GROUPS={"المجموعة الأولى":["مريم","عائشة","ريم","شهد"],"المجموعة الثانية":["فاطمة","جود","سلمى","لين"],"المجموعة الثالثة":["آمنة","رهف","هند","تسنيم"],"المجموعة الرابعة":["ملاك","روان","غلا","يارا"]};
+const gNames=Object.keys(GROUPS); let gTurn=0; const pools={};
+$("#pickBtn").onclick=()=>{
+  const g=gNames[gTurn%gNames.length]; gTurn++;
+  if(!pools[g]||!pools[g].length)pools[g]=shuffle(GROUPS[g]);
+  const s=pools[g].pop(); const el=$("#who"); let n=0;
+  const t=setInterval(()=>{el.textContent=GROUPS[gNames[n%4]][n%4];n++;if(n>10){clearInterval(t);el.textContent=`${g} • الطالبة ${s}`}},70);
+};
+
+function drawScene(){
+  const c=$("#scene"),x=c.getContext("2d"),W=c.width,H=c.height;
+  const sky=x.createLinearGradient(0,0,0,H);sky.addColorStop(0,"#9fd9d6");sky.addColorStop(1,"#f5ecdc");x.fillStyle=sky;x.fillRect(0,0,W,H);
+  x.fillStyle="#f6d38a";x.beginPath();x.arc(560,60,30,0,7);x.fill();
+  if(level>0){x.fillStyle="#0f8b8d";x.fillRect(0,H-70,W,70);x.strokeStyle="#d8f0ef";x.lineWidth=3;for(let i=0;i<8;i++){x.beginPath();x.arc(40+i*85,H-60,18,Math.PI,0);x.stroke()}}
+  x.fillStyle="#e9dcc3";x.fillRect(0,H-36,W,36);
+  // palm/tree
+  x.fillStyle="#7a5a3a";x.fillRect(470,120,16,H-150);x.fillStyle="#1f4d3a";
+  for(let a=0;a<7;a++){x.save();x.translate(478,122);x.rotate(-1.4+a*.47);x.beginPath();x.ellipse(40,0,46,11,0,0,7);x.fill();x.restore()}
+  // kite in tree
+  x.save();x.translate(430,100);x.rotate(-.3);x.fillStyle="#c2553f";x.beginPath();x.moveTo(0,-30);x.lineTo(22,0);x.lineTo(0,40);x.lineTo(-22,0);x.closePath();x.fill();
+  x.strokeStyle="#fff";x.lineWidth=2;x.beginPath();x.moveTo(0,-30);x.lineTo(0,40);x.moveTo(-22,0);x.lineTo(22,0);x.stroke();x.restore();
+  x.strokeStyle="#5d6f69";x.lineWidth=1.5;x.beginPath();x.moveTo(420,140);x.bezierCurveTo(330,200,260,170,215,205);x.stroke();
+  // Sara and Ali
+  const kid=(px,h,col,scarf)=>{x.fillStyle=col;x.beginPath();x.roundRect(px-14,H-36-h,28,h-20,10);x.fill();x.fillStyle="#c99a74";x.beginPath();x.arc(px,H-36-h-6,13,0,7);x.fill();if(scarf){x.fillStyle=scarf;x.beginPath();x.arc(px,H-36-h-9,14,Math.PI,0);x.fill()}x.fillStyle="#17302a";x.fillRect(px-10,H-56,7,20);x.fillRect(px+3,H-56,7,20)};
+  kid(205,92,"#d9a441","#0a6466"); kid(270,120,"#ffffff",null);
+  x.fillStyle="#1f4d3a";x.font="600 15px Lexend, sans-serif";x.fillText("Sara",188,H-12);x.fillText("Ali",258,H-12);
+}
+
+function startQuiz(){idx=0;score=0;showQ()}
+function showQ(){
+  const L=LEVELS[level],q=L.qs[idx];$("#qbar").style.width=(idx/L.qs.length*100)+"%";
+  $("#qfb").textContent="";$("#qnext").hidden=true;
+  const box=$("#qbox");box.innerHTML=`<p>${idx+1}. ${q[0]}</p><div class="opts"></div>`;
+  shuffle([q[1],...q[2]]).forEach(o=>{const b=document.createElement("button");b.className="opt";b.textContent=o;
+    b.onclick=()=>{box.querySelectorAll(".opt").forEach(x=>x.disabled=true);
+      if(o===q[1]){b.classList.add("right");score++;$("#qfb").textContent="أحسنتِ! إجابة صحيحة 🌟";say("Great job!")}
+      else{b.classList.add("wrong");[...box.querySelectorAll(".opt")].find(x=>x.textContent===q[1]).classList.add("right");$("#qfb").textContent="حاولي مرة أخرى في القصة، الإجابة الصحيحة باللون الأخضر"}
+      $("#qnext").hidden=false};
+    box.querySelector(".opts").append(b)});
+}
+$("#qnext").onclick=()=>{const L=LEVELS[level];idx++;if(idx<L.qs.length)showQ();else{$("#qbar").style.width="100%";
+  $("#qbox").innerHTML=`<p style="font-size:1.4rem;text-align:center">${score} / ${L.qs.length} ⭐</p>`;
+  $("#qfb").textContent=score>=3?"ممتاز! المنصة ترشّحك للمستوى التالي":"لا بأس، المنصة ستقترح عليك نصًا داعمًا";$("#qnext").hidden=true}};
+
+function startWrite(){
+  const words=LEVELS[level].sent.split(" ");$("#slot").innerHTML="";$("#bank").innerHTML="";$("#wfb").textContent="";
+  shuffle(words).forEach(w=>{const b=document.createElement("button");b.className="chip";b.textContent=w;
+    b.onclick=()=>{(b.parentElement.id==="bank"?$("#slot"):$("#bank")).append(b)};$("#bank").append(b)});
+}
+$("#wcheck").onclick=()=>{const got=[...$("#slot").children].map(c=>c.textContent).join(" ");
+  if(got===LEVELS[level].sent){$("#wfb").textContent="رائع! جملة صحيحة ✍️";say(got)}else $("#wfb").textContent="ليست بالترتيب الصحيح بعد، جرّبي مرة أخرى"};
+$("#wreset").onclick=startWrite;
+
+const STU=[["Maryam",92,"إثراء"],["Aisha",81,"أساسي"],["Reem",74,"أساسي"],["Fatma",58,"دعم"],["Jood",88,"إثراء"],["Salma",49,"دعم"]];
+function renderTeacher(){$("#studs").innerHTML=STU.map(([n,v,l])=>{const c=v>=80?"var(--ok)":v>=60?"var(--gold)":"var(--bad)";
+  return `<div class="stu"><span>${n}</span><div class="bar"><i style="width:${v}%;background:${c}"></i></div><span class="pill" style="background:color-mix(in srgb,${c} 18%,transparent)">${l}</span></div>`}).join("")}
+
+document.querySelectorAll(".lv").forEach(b=>b.onclick=()=>{level=+b.dataset.l;
+  document.querySelectorAll(".lv").forEach(x=>x.setAttribute("aria-pressed",x===b));renderStory();startQuiz();startWrite();$("#gloss").innerHTML='<span class="en">Tap a word</span><span class="ar">المعنى يظهر هنا</span>'});
+document.querySelectorAll(".tab").forEach(t=>t.onclick=()=>{document.querySelectorAll(".tab").forEach(x=>x.setAttribute("aria-selected",x===t));
+  ["read","quiz","write","teach"].forEach(p=>$("#p-"+p).hidden=p!==t.dataset.p);try{speechSynthesis.cancel()}catch(e){}});
+const OFFERS={
+ en:[["منصة قراءة وكتابة","قصص بثلاثة مستويات، نطق صوتي، معاني الكلمات، أسئلة فهم، وبناء جمل. جرّبيها في الأسفل 👇"],["قصص علاجية مصوّرة","قصص قصيرة للطالبات الضعيفات في القراءة، بصور وصوت وتدرّج في الصعوبة"],["عروض دروس تفاعلية","عروض حيّة بألعاب واختيار عشوائي عادل للمجموعات والطالبات"]],
+ ar:[["لعبة «سباق القراءة»","لعبة قراءة جاهزة تشجّع الطلاب على القراءة بصوت مرتفع",'<a href="https://mongia-spec.github.io/reading-race/" target="_blank" rel="noopener">افتحي اللعبة ←</a>'],["منصات دروس النصوص","كل نص يتحوّل إلى رحلة: مشاهد سينمائية، أنشطة فهم، أنماط لغوية، وتقويم فوري"],["أوراق عمل بثلاثة مستويات","دعم وأساسي وإثراء لنفس الهدف، بخط واضح وتصميم أنيق، دون إحراج أي طالب"]],
+ is:[["منصات دروس تفاعلية","تلاوة، فهم، قيم، ولعب أدوار تطبيقية يؤدّيها الطلاب، مع اختيار عادل للمجموعات"],["ملخص سبوري بنوعين","ملخص مكتوب للصق في الدفتر، وخريطة ذهنية مرسومة للتلوين"],["ربط بالهوية والقيم","استخراج القيمة وربطها بحياة الطالب ووطنه في كل درس"]],
+ so:[["حقائب دروس نموذجية","تحضير كامل مع وسائل وعرض تفاعلي وأوراق عمل للدرس النموذجي"],["خرائط ومشاهد سينمائية","صور ومقاطع واقعية تعيد الطالب إلى المكان والزمن"],["اختبارات وتقويم","اختبارات منظّمة مع مفتاح إجابة وجدول مهارات وخطط علاجية"]],
+ all:[["تحضير الدروس","تحضير احترافي على قالب مدرستك، مع الوسائل وأوراق العمل"],["فيديوهات تعليمية سينمائية","مشاهد واقعية مولّدة ومحرّكة بالذكاء الاصطناعي لنصوص دروسك"],["تدريب المعلمات","ورش عملية في توظيف الذكاء الاصطناعي في التحضير والتدريس"]]
+};
+function renderOffers(s){$("#offers").innerHTML=OFFERS[s].map(o=>`<div class="offer"><b>${o[0]}</b><span>${o[1]}</span>${o[2]||""}</div>`).join("");
+  document.querySelectorAll(".sb").forEach(b=>b.setAttribute("aria-selected",b.dataset.s===s))}
+document.querySelectorAll(".sb").forEach(b=>b.onclick=()=>renderOffers(b.dataset.s));
+renderOffers("en");
+renderStory();startQuiz();startWrite();renderTeacher();
+</script>
+
+</body>
+</html>
