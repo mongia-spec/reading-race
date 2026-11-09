@@ -624,6 +624,12 @@ var _home4=SCREENS.home;SCREENS.home=function(){var h=_home4();return h.replace(
 var _ah=AFTER.home;AFTER.home=function(){if(_ah)_ah();var c=$('#scls');if(!c)return;var f=c.onchange;c.onchange=function(){f&&f();var s=$('#snm'),l=ROSTER[c.value]||[];if(l.length===1){s.value='0'}}};
 /* complete nominal sentences in worksheet (s) part ب */
 (function(){var q=WS.s.parts[1][2];var fix={};q.forEach(function(it){if(fix[it.q])it.q=fix[it.q]})})();
+/* video station also completes when the student opens the YouTube video */
+ACT.ytopen=function(){if(!ro()&&!P.done.video){award('video',3)}};
+/* certificate: show any station still missing */
+var _final5=SCREENS.final;SCREENS.final=function(){var h=_final5();var miss=STN.filter(function(s){return !P.done[s[0]]});
+ if(A_('final').sub&&miss.length){h=h.replace('<div class="cert"','<div class="card" style="border-color:var(--gold);background:#FFF7DE"><h3>🔎 بَقِيَتْ '+(miss.length===1?'مَحَطَّةٌ واحِدَةٌ':miss.length+' مَحَطّاتٍ')+' لِتَكْتَمِلَ رِحْلَتُكَ:</h3><div class="row">'+miss.map(function(s){return'<button class="btn alt" data-go="'+s[0]+'">'+s[1]+' '+s[2]+'</button>'}).join('')+'</div></div><div class="cert"')}
+ return h};
 
 /* ---- init ---- */
 render();
