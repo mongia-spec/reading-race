@@ -630,6 +630,10 @@ ACT.ytopen=function(){if(!ro()&&!P.done.video){award('video',3)}};
 var _final5=SCREENS.final;SCREENS.final=function(){var h=_final5();var miss=STN.filter(function(s){return !P.done[s[0]]});
  if(A_('final').sub&&miss.length){h=h.replace('<div class="cert"','<div class="card" style="border-color:var(--gold);background:#FFF7DE"><h3>🔎 بَقِيَتْ '+(miss.length===1?'مَحَطَّةٌ واحِدَةٌ':miss.length+' مَحَطّاتٍ')+' لِتَكْتَمِلَ رِحْلَتُكَ:</h3><div class="row">'+miss.map(function(s){return'<button class="btn alt" data-go="'+s[0]+'">'+s[1]+' '+s[2]+'</button>'}).join('')+'</div></div><div class="cert"')}
  return h};
+/* sessions from older versions (no secret code) must log in again so their work can be sent */
+if(P.name&&(!P.pin||P.idx==null)){P.name='';P.cls='';P.stars={};P.done={};P.A={};try{localStorage.setItem(LS,JSON.stringify(P))}catch(e){}}
+/* send right after login so the teacher sees the student has entered */
+var _login6=ACT.login;ACT.login=function(){_login6.apply(this,arguments);var t=setInterval(function(){if(P.name&&P.pin){clearInterval(t);sync()}},300);setTimeout(function(){clearInterval(t)},15000)};
 
 /* ---- init ---- */
 render();
