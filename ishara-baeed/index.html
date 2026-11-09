@@ -516,14 +516,14 @@ SCREENS.home=function(){var h=_home2();
  return h};
 ACT.logout=function(){};
 ACT.login=function(){var c=$('#scls').value,n=$('#snm').value,pin=($('#spin')||{}).value||'',m=$('#lmsg');
- if(!c||n===''||!/^\d{4}$/.test(pin)){m.textContent='اخْتَرِ الشُّعْبَةَ وَالِاسْمَ، وَاكْتُبْ رَمْزَكَ (4 أَرْقامٍ).';buzz();return}
+ if(!c||n===''||!/^\d{4}$/.test(pin)){m.textContent=(!c?'⬅ اخْتَرِ الشُّعْبَةَ أَوَّلًا.':n===''?'⬅ اخْتَرِ اسْمَكَ مِنَ الْقائِمَةِ.':'⬅ اكْتُبْ رَمْزَكَ السِّرِّيَّ (4 أَرْقامٍ).');m.style.color='#C23B2E';m.style.fontWeight='700';_buzz();return}
  var r=ROSTER[c][+n];
  function enter(data){P.cls=c;P.idx=+n;P.name=r[0];P.sheet=r[1];P.pin=pin;P.stars={};P.done={};P.A={};
   if(data){try{var d=JSON.parse(data).P;P.stars=d.stars||{};P.done=d.done||{};P.A=d.A||{}}catch(e){}}
   _save();cheer();go('home');setTimeout(function(){play('welcome')},400)}
  if(!API){enter(null);return}
  m.textContent='⏳ جارٍ التَّحَقُّقُ…';
- fetch(API+'?a=load&cl='+encodeURIComponent(c)+'&n='+n+'&pin='+pin).then(function(x){return x.json()}).then(function(j){if(!j.ok){m.textContent='الرَّمْزُ غَيْرُ صَحيحٍ. اسْأَلْ مُعَلِّمَتَكَ أَوْ وَلِيَّ أَمْرِكَ عَنْ رَمْزِكَ.';buzz();return}enter(j.data)}).catch(function(){m.textContent='تَعَذَّرَ الِاتِّصالُ. تَأَكَّدْ مِنَ الْإِنْتَرْنِت ثُمَّ أَعِدِ الْمُحاوَلَةَ.';buzz()})};
+ fetch(API+'?a=load&cl='+encodeURIComponent(c)+'&n='+n+'&pin='+pin).then(function(x){return x.json()}).then(function(j){if(!j.ok){m.textContent='الرَّمْزُ غَيْرُ صَحيحٍ. اسْأَلْ مُعَلِّمَتَكَ أَوْ وَلِيَّ أَمْرِكَ عَنْ رَمْزِكَ.';m.style.color='#C23B2E';_buzz();return}enter(j.data)}).catch(function(){m.textContent='تَعَذَّرَ الِاتِّصالُ. تَأَكَّدْ مِنَ الْإِنْتَرْنِت ثُمَّ أَعِدِ الْمُحاوَلَةَ.';_buzz()})};
 /* ---------- on-screen Arabic keyboard ---------- */
 var KROWS=[['ض','ص','ث','ق','ف','غ','ع','ه','خ','ح','ج','د'],['ش','س','ي','ب','ل','ا','ت','ن','م','ك','ط','ذ'],['ئ','ء','ؤ','ر','ى','ة','و','ز','ظ','أ','إ','آ'],['َ','ُ','ِ','ْ','ّ','ً','ٌ','ٍ','،','.','؟','لا']];
 function kbdHtml(t){return'<div class="kbd" id="kbd_'+t+'" hidden>'+KROWS.map(function(r){return'<div class="kr">'+r.map(function(k){return'<button data-do="kk" data-t="'+t+'" data-k="'+k+'">'+(/[ً-ْ]/.test(k)?'ـ'+k:k)+'</button>'}).join('')+'</div>'}).join('')+'<div class="kr"><button class="wide" data-do="kk" data-t="'+t+'" data-k=" ">مَسافَةٌ</button><button data-do="kk" data-t="'+t+'" data-k="BS">⌫</button><button data-do="kk" data-t="'+t+'" data-k="NL">↵</button></div></div>'}
@@ -619,6 +619,9 @@ ROSTER['تجربة']=[['طالِبُ تَجْرِبَةٍ','s']];
 ACT.treset=function(){if(!confirmBox())return;fetch(API+'?a=reset&pass='+encodeURIComponent(TP)).then(function(x){return x.json()}).then(function(){tfetch(TP,render)})};
 function confirmBox(){return true}
 var _home4=SCREENS.home;SCREENS.home=function(){var h=_home4();return h.replace('<option value="ب">الرّابِعُ ب</option>','<option value="ب">الرّابِعُ ب</option><option value="تجربة">🧪 تَجْرِبَةٌ (لِلْمُعَلِّمَةِ)</option>')};
+
+/* auto-select the name when the class has only one */
+var _ah=AFTER.home;AFTER.home=function(){if(_ah)_ah();var c=$('#scls');if(!c)return;var f=c.onchange;c.onchange=function(){f&&f();var s=$('#snm'),l=ROSTER[c.value]||[];if(l.length===1){s.value='0'}}};
 
 /* ---- init ---- */
 render();
