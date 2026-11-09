@@ -575,7 +575,7 @@ SCREENS.final=function(){var a=A_('final');var h='<div class="eyebrow">الْم�
 var TP='',TROWS=null,TCLS='';
 SCREENS.teacher=function(){if(VIEW)return'';
  if(!TROWS)return'<h2>👩‍🏫 رُكْنُ الْمُعَلِّمَةِ</h2><div class="card"><p>اكْتُبي كَلِمَةَ السِّرِّ لِتَرَيْ أَعْمالَ الطَّلَبَةِ.</p><input id="tpass" type="password" style="max-width:260px"><p class="hint" id="tmsg"></p><button class="btn gold" data-do="tlogin">دُخولٌ</button></div>';
- var h='<h2>👩‍🏫 أَعْمالُ الطَّلَبَةِ</h2><div class="row">'+['أ','ب'].map(function(c){return'<button class="btn '+(TCLS===c?'gold':'alt')+'" data-do="tcls" data-c="'+c+'">الرّابِعُ '+c+'</button>'}).join('')+'<button class="btn alt" data-do="tlogin2">🔄 تَحْديثٌ</button></div>';
+ var h='<h2>👩‍🏫 أَعْمالُ الطَّلَبَةِ</h2><div class="row">'+['أ','ب','تجربة'].map(function(c){return'<button class="btn '+(TCLS===c?'gold':'alt')+'" data-do="tcls" data-c="'+c+'">'+(c==='تجربة'?'🧪 تَجْرِبَةٌ':'الرّابِعُ '+c)+'</button>'}).join('')+'<button class="btn alt" data-do="treset">🧹 مَسْحُ طالِبِ التَّجْرِبَةِ</button>'+'<button class="btn alt" data-do="tlogin2">🔄 تَحْديثٌ</button></div>';
  if(TCLS){h+='<table class="tbl" style="font-size:18px"><tr><th>الطّالِبُ</th><th>الْمَحَطّاتُ</th><th>وَرَقَةُ الْعَمَلِ</th><th>التَّحَدّي</th><th></th></tr>'+ROSTER[TCLS].map(function(r,i){var row=TROWS.filter(function(x){return x.key===TCLS+'|'+i})[0];var d=null;try{d=row&&JSON.parse(row.data).P}catch(e){}
   function sc(k){var a=d&&d.A&&d.A[k];return a&&a.res?a.res.right+'/'+a.res.total:'—'}var wk=r[1]==='p'?'p':'s';
   return'<tr><td style="text-align:right">'+esc(r[0])+'</td><td>'+(d?Object.keys(d.done||{}).filter(function(k){return STN.some(function(s){return s[0]===k})}).length+'/'+STN.length:'لَمْ يَدْخُلْ')+'</td><td>'+sc('ws:'+wk)+'</td><td>'+sc('final')+'</td><td>'+(d?'<button class="btn" style="font-size:15px;padding:2px 10px" data-do="tview" data-i="'+i+'">👁 مَنَصَّتُهُ</button>':'')+'</td></tr>'}).join('')+'</table>'}
@@ -597,6 +597,11 @@ var RO_OK={say:1,slgo:1,slnext:1,slprev:1,slplay:1,slstart:1,ytopen:1,vexit:1,tv
 document.addEventListener('click',function(e){if(!VIEW)return;var a=e.target.closest('[data-do]');if(a&&!RO_OK[a.dataset.do]){e.stopImmediatePropagation();e.preventDefault()}},true);
 /* students cannot reach teacher-only screens while logged in? (teacher needs password anyway) */
 OPENW['ws:s:w']=WS.s.open;OPENW['ws:p:w']=WS.p.open;OPENW['b5']={words:['ذلِكَ','تِلْكَ','أُولئِكَ'],min:25};
+
+ROSTER['تجربة']=[['طالِبُ تَجْرِبَةٍ','s']];
+ACT.treset=function(){if(!confirmBox())return;fetch(API+'?a=reset&pass='+encodeURIComponent(TP)).then(function(x){return x.json()}).then(function(){tfetch(TP,render)})};
+function confirmBox(){return true}
+var _home4=SCREENS.home;SCREENS.home=function(){var h=_home4();return h.replace('<option value="ب">الرّابِعُ ب</option>','<option value="ب">الرّابِعُ ب</option><option value="تجربة">🧪 تَجْرِبَةٌ (لِلْمُعَلِّمَةِ)</option>')};
 
 /* ---- init ---- */
 render();
