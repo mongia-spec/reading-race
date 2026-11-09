@@ -622,6 +622,8 @@ var _home4=SCREENS.home;SCREENS.home=function(){var h=_home4();return h.replace(
 
 /* auto-select the name when the class has only one */
 var _ah=AFTER.home;AFTER.home=function(){if(_ah)_ah();var c=$('#scls');if(!c)return;var f=c.onchange;c.onchange=function(){f&&f();var s=$('#snm'),l=ROSTER[c.value]||[];if(l.length===1){s.value='0'}}};
+/* complete nominal sentences in worksheet (s) part ب */
+(function(){var q=WS.s.parts[1][2];var fix={'____ الْجَبَلُ الْعالي.':'____ الْجَبَلُ عالٍ.','____ الشَّجَرَةُ الْخَضْراءُ.':'____ الشَّجَرَةُ خَضْراءُ.','____ الْمَدْرَسَةُ الْجَديدَةُ.':'____ الْمَدْرَسَةُ جَديدَةٌ.'};q.forEach(function(it){if(fix[it.q])it.q=fix[it.q]})})();
 
 /* ---- init ---- */
 render();
