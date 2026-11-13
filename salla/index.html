@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>سلّة الخير: رحلة إلى بيت الجدّة</title>
+<style>
+@font-face{font-family:Dubai;src:url(fonts/DUBAI-BOLD.TTF);font-weight:700}
+@font-face{font-family:Dubai;src:url(fonts/DUBAI-MEDIUM.TTF);font-weight:500}
+:root{--pb:calc(clamp(30px,4vh,40px) + env(safe-area-inset-bottom,0px));--teal:#0b5c63;--teal2:#0f7f86;--gold:#f4c35a;--gold2:#ffdf8c;--red:#c8102e;--green:#12813f;--ink:#0a2a2e;--sand:#f6e7c8}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;user-select:none}
+html,body{width:100%;height:100%;overflow:hidden;background:#071c1f;font-family:Dubai,Tahoma,sans-serif;color:#fff;touch-action:pan-y}
+#c{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none}
+/* الشاشات تتمرّر باللمس إذا لم تتّسع (هواتف أفقية/صغيرة) */
+.screen{position:fixed;inset:0;display:none;align-items:center;justify-content:flex-start;flex-direction:column;z-index:20;max-height:100vh;max-height:100dvh;overflow-x:hidden;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;touch-action:pan-y;padding:max(10px,env(safe-area-inset-top)) max(10px,env(safe-area-inset-right)) max(12px,env(safe-area-inset-bottom)) max(10px,env(safe-area-inset-left))}
+.screen>*{flex-shrink:0}
+.screen>:first-child{margin-top:auto}
+.screen>:last-child{margin-bottom:auto}
+.screen.on{display:flex}
+/* ----- شاشة البداية ----- */
+#title{background:radial-gradient(ellipse at 50% 30%,rgba(11,92,99,.25),rgba(4,20,24,.82) 70%)}
+.logo{font-size:clamp(34px,6.2vw,92px);font-weight:700;color:var(--gold2);text-shadow:0 4px 0 #8a5a12,0 10px 30px rgba(0,0,0,.6);letter-spacing:1px;text-align:center;line-height:1.1}
+.logo small{display:block;font-size:.42em;color:#fff;text-shadow:0 3px 12px rgba(0,0,0,.7);margin-top:.25em;font-weight:500}
+.flagbar{width:min(520px,70vw);height:10px;margin:16px auto 6px;border-radius:6px;background:linear-gradient(90deg,var(--green) 0 33%,#fff 33% 66%,var(--red) 66%);box-shadow:0 2px 10px rgba(0,0,0,.4)}
+.grades{display:flex;gap:clamp(10px,1.6vw,22px);margin-top:clamp(18px,3vh,36px);flex-wrap:wrap;justify-content:center}
+.gcard{width:clamp(150px,19vw,250px);border-radius:22px;padding:14px 12px 16px;background:linear-gradient(160deg,rgba(15,127,134,.92),rgba(7,52,58,.95));border:3px solid var(--gold);box-shadow:0 10px 30px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.25);cursor:pointer;text-align:center;transition:transform .15s;position:relative}
+.gcard:hover{transform:translateY(-6px) scale(1.03)}
+.gcard .g{font-size:clamp(22px,2.6vw,36px);font-weight:700;color:var(--gold2)}
+.gcard .r{font-size:clamp(14px,1.35vw,19px);opacity:.95;margin-top:4px;min-height:2.6em}
+.gcard .a{font-size:clamp(40px,4.4vw,64px);margin:4px 0}
+.gcard.locked{filter:grayscale(.85) brightness(.6);border-color:#888}
+.gcard.locked::after{content:'🔒';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:clamp(50px,6vw,90px);filter:none}
+.row{display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap}
+.btn{min-height:44px;font-family:inherit;font-weight:700;font-size:clamp(18px,1.9vw,28px);padding:.45em 1.3em;border-radius:999px;border:3px solid var(--gold);background:linear-gradient(180deg,#ffd76a,#e9a22a);color:#3a2000;cursor:pointer;box-shadow:0 6px 0 #8a5a12,0 12px 24px rgba(0,0,0,.4)}
+.btn:active{transform:translateY(4px);box-shadow:0 2px 0 #8a5a12}
+.btn.ghost{background:rgba(7,52,58,.85);color:#fff}
+.small{font-size:clamp(13px,1.2vw,17px);opacity:.85}
+.panel{background:linear-gradient(160deg,rgba(11,92,99,.94),rgba(5,38,43,.96));border:3px solid var(--gold);border-radius:26px;padding:clamp(16px,2.4vw,34px);box-shadow:0 20px 60px rgba(0,0,0,.55);max-width:min(980px,94vw);text-align:center}
+.panel h2{color:var(--gold2);font-size:clamp(24px,2.8vw,40px);margin-bottom:10px}
+.heroes{display:flex;gap:18px;justify-content:center;margin:10px 0}
+.hcard{width:clamp(120px,13vw,170px);border-radius:18px;border:3px solid rgba(255,255,255,.3);overflow:hidden;cursor:pointer;background:#0a3a40}
+.hcard img{width:100%;display:block;aspect-ratio:1/1;object-fit:contain;background:#e8dcc4}
+.hcard div{padding:6px;font-size:clamp(18px,1.8vw,24px);font-weight:700}
+.hcard.sel{border-color:var(--gold);box-shadow:0 0 0 4px rgba(244,195,90,.45)}
+.cls{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:8px 0}
+.chip{min-height:44px;font-family:inherit;font-size:clamp(18px,1.8vw,26px);font-weight:700;min-width:64px;padding:.25em .7em;border-radius:14px;border:2px solid rgba(255,255,255,.35);background:rgba(255,255,255,.08);color:#fff;cursor:pointer}
+.chip.sel{background:var(--gold);color:#3a2000;border-color:var(--gold)}
+/* ----- واجهة اللعب ----- */
+#hud{position:fixed;inset:0;pointer-events:none;z-index:10;display:none}
+#hud.on{display:block}
+.top{position:absolute;top:10px;left:12px;right:12px;display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.pill{background:linear-gradient(180deg,rgba(11,92,99,.88),rgba(5,38,43,.9));border:2px solid var(--gold);border-radius:999px;padding:4px 16px;font-size:clamp(17px,1.8vw,26px);font-weight:700;box-shadow:0 6px 16px rgba(0,0,0,.35);white-space:nowrap}
+.pill b{color:var(--gold2)}
+#prog{position:absolute;top:62px;left:50%;transform:translateX(-50%);width:min(560px,60vw);height:14px;border-radius:10px;background:rgba(0,0,0,.35);border:2px solid rgba(244,195,90,.7)}
+#progFill{position:absolute;inset:0 auto 0 0;width:0;border-radius:8px;background:linear-gradient(90deg,var(--green),#e9e9e9,var(--red))}
+#progHero{position:absolute;top:50%;transform:translate(-50%,-50%);font-size:24px;left:0}
+#progHouse{position:absolute;right:-18px;top:50%;transform:translateY(-50%);font-size:26px}
+#stageName{position:absolute;top:22%;left:50%;transform:translate(-50%,-50%) scale(.6);font-size:clamp(34px,5vw,72px);font-weight:700;color:var(--gold2);text-shadow:0 4px 0 #6b4510,0 10px 30px rgba(0,0,0,.6);opacity:0;transition:all .6s;white-space:nowrap}
+#stageName.show{opacity:1;transform:translate(-50%,-50%) scale(1)}
+#qbar{position:absolute;top:96px;width:max-content;max-height:34vh;overflow:hidden;left:50%;transform:translateX(-50%) translateY(-20px);max-width:min(1100px,92vw);padding:10px 26px;border-radius:22px;background:linear-gradient(180deg,rgba(9,70,76,.92),rgba(4,32,36,.94));border:3px solid var(--gold);font-size:clamp(22px,2.6vw,40px);font-weight:700;text-align:center;line-height:1.35;opacity:0;transition:all .4s;box-shadow:0 12px 30px rgba(0,0,0,.45)}
+#qbar.show{opacity:1;transform:translateX(-50%) translateY(0)}
+#qbar .turn{display:block;font-size:.55em;color:var(--gold2);font-weight:500}
+#sub{position:absolute;bottom:clamp(150px,22vh,210px);left:50%;transform:translateX(-50%);max-width:min(1050px,90vw);text-align:center;font-size:clamp(20px,2.3vw,34px);font-weight:700;line-height:1.4;text-shadow:0 2px 4px #000,0 0 18px rgba(0,0,0,.9);opacity:0;transition:opacity .3s}
+#sub.show{opacity:1}
+#sub .who{color:var(--gold2)}
+#toast{position:absolute;top:40%;left:50%;transform:translate(-50%,-50%) scale(.5);font-size:clamp(40px,6vw,96px);font-weight:700;opacity:0;transition:all .35s;text-shadow:0 5px 0 rgba(0,0,0,.35),0 0 30px rgba(0,0,0,.5);white-space:nowrap}
+#toast.show{opacity:1;transform:translate(-50%,-50%) scale(1)}
+/* أزرار التحكم */
+#pad{position:fixed;inset:auto 0 0 0;height:0;z-index:12;display:none}
+#pad.on{display:block}
+.cbtn{position:fixed;bottom:var(--pb);width:clamp(84px,9.5vw,138px);height:clamp(84px,9.5vw,138px);border-radius:50%;border:4px solid rgba(255,223,140,.95);background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.35),rgba(15,127,134,.85) 45%,rgba(4,40,45,.92));box-shadow:0 8px 0 rgba(0,0,0,.35),0 14px 28px rgba(0,0,0,.45),inset 0 -6px 14px rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;font-size:clamp(38px,4.4vw,64px);color:#fff;pointer-events:auto;touch-action:none;transition:transform .06s}
+.cbtn.down{transform:translateY(5px) scale(.95);box-shadow:0 3px 0 rgba(0,0,0,.35),0 6px 14px rgba(0,0,0,.4);background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.45),rgba(244,195,90,.95) 45%,rgba(140,90,18,.95))}
+.cbtn svg{width:58%;height:58%;fill:#fff;filter:drop-shadow(0 2px 2px rgba(0,0,0,.5))}
+#bL{left:clamp(14px,2.5vw,40px)}
+#bR{left:calc(clamp(14px,2.5vw,40px) + clamp(96px,11vw,158px))}
+#bGo{right:clamp(14px,2.5vw,40px);width:clamp(100px,11vw,160px);height:clamp(100px,11vw,160px);border-color:#9cff9c;background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.35),rgba(18,129,63,.92) 45%,rgba(6,60,30,.95))}
+#bJump{right:calc(clamp(14px,2.5vw,40px) + clamp(112px,12.5vw,176px))}
+#bStop{right:calc(clamp(14px,2.5vw,40px) + clamp(40px,4.6vw,66px));bottom:calc(var(--pb) + clamp(126px,13.5vw,190px));width:clamp(62px,6.4vw,92px);height:clamp(62px,6.4vw,92px);border-color:#ffb3b3;background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.35),rgba(200,16,46,.9) 45%,rgba(90,6,20,.95))}
+.lbl{position:absolute;bottom:-25px;line-height:1.2;left:50%;transform:translateX(-50%);font-size:clamp(13px,1.2vw,17px);white-space:nowrap;text-shadow:0 2px 3px #000}
+#topBtns{position:fixed;top:66px;z-index:13;left:12px;display:none;gap:8px}
+#topBtns.on{display:flex}
+.ibtn{pointer-events:auto;touch-action:manipulation;width:clamp(44px,4vw,56px);height:clamp(44px,4vw,56px);border-radius:14px;border:2px solid var(--gold);background:rgba(5,38,43,.88);color:#fff;font-size:clamp(20px,2vw,28px);display:flex;align-items:center;justify-content:center;cursor:pointer}
+#loading{position:fixed;inset:0;z-index:40;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(ellipse at center,#0b5c63,#041416);gap:18px}
+#loading .bar{width:min(520px,70vw);height:16px;border-radius:10px;background:rgba(255,255,255,.12);border:2px solid var(--gold);overflow:hidden}
+#loading .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--gold),#fff6d6);transition:width .2s}
+#loading .t{font-size:clamp(20px,2vw,30px);color:var(--gold2)}
+table.lb{border-collapse:collapse;margin:10px auto;font-size:clamp(17px,1.7vw,24px);min-width:min(560px,80vw)}
+table.lb td,table.lb th{padding:6px 14px;border-bottom:1px solid rgba(255,255,255,.18)}
+table.lb th{color:var(--gold2)}
+table.lb tr.win td{color:var(--gold2);font-weight:700}
+.stars{font-size:clamp(34px,4.2vw,60px);letter-spacing:4px;margin:6px 0}
+.code{display:inline-block;font-size:clamp(40px,5vw,70px);letter-spacing:14px;color:var(--gold2);background:rgba(0,0,0,.3);border:3px dashed var(--gold);border-radius:18px;padding:4px 24px;margin:8px 0;direction:ltr}
+.keypad{display:grid;grid-template-columns:repeat(3,clamp(60px,6vw,84px));gap:10px;justify-content:center;margin:12px auto;direction:ltr}
+.keypad button{font-family:inherit;font-size:clamp(24px,2.6vw,36px);font-weight:700;height:clamp(56px,5.6vw,78px);border-radius:16px;border:2px solid var(--gold);background:rgba(255,255,255,.1);color:#fff;cursor:pointer}
+#codeShow{font-size:clamp(34px,4vw,56px);letter-spacing:12px;direction:ltr;min-height:1.3em;color:var(--gold2)}
+/* ===== تكييف الشاشات الصغيرة ===== */
+/* شريط التقدّم والأزرار العلوية لا يتداخلان على الشاشات غير العريضة */
+@media (max-width:1320px){#prog{top:56px}#topBtns{top:82px}#qbar{top:136px}}
+/* الهواتف الطولية */
+@media (max-aspect-ratio:1/1) and (max-width:600px){
+  .top{left:8px;right:8px;top:8px}
+  .pill{font-size:16px;padding:3px 12px}
+  #prog{top:52px;width:min(560px,70vw)}
+  #topBtns{top:76px;left:50%;transform:translateX(-50%);gap:6px}
+  #qbar{top:128px;max-width:96vw;padding:6px 12px;font-size:clamp(16px,4.6vw,21px);line-height:1.3;border-radius:16px;max-height:34vh}
+  #sub{font-size:clamp(17px,4.6vw,22px);max-width:94vw}
+  .cbtn{width:64px;height:64px;font-size:30px}
+  #bL{left:10px}
+  #bR{left:84px}
+  #bJump{right:102px}
+  #bGo{right:10px;width:82px;height:82px}
+  #bStop{right:20px;width:60px;height:60px;bottom:calc(var(--pb) + 82px + 34px)}
+  .lbl{font-size:13px}
+  .grades{gap:10px;margin-top:12px}
+  .gcard{width:clamp(130px,43vw,190px);padding:8px 8px 10px;border-radius:18px}
+  .gcard .g{font-size:22px}.gcard .a{font-size:36px;margin:0}.gcard .r{font-size:14px;min-height:0}
+  .logo{font-size:clamp(34px,11vw,52px)}
+  .flagbar{margin:10px auto 4px}
+  #title .row{margin-top:14px!important}
+  .btn{font-size:18px}
+  .panel{padding:14px 12px;border-radius:20px}
+  .hcard{width:clamp(100px,34vw,150px)}
+}
+/* الهواتف الأفقية والشاشات القصيرة */
+@media (max-height:500px){
+  .top{top:6px}
+  .pill{font-size:15px;padding:2px 12px}
+  .top .pill:nth-child(2){margin-inline-end:auto}
+  #topBtns{top:6px;left:max(112px,16vw);gap:6px}
+  #prog{top:56px;width:min(520px,56vw)}
+  #qbar{top:72px;padding:4px 16px;font-size:clamp(14px,2vw,19px);line-height:1.25;border-radius:14px;max-width:min(900px,74vw);max-height:30vh;border-width:2px}
+  #stageName{top:30%}
+  #sub{bottom:calc(var(--pb) + 96px);font-size:clamp(16px,2.4vw,22px)}
+  .cbtn{width:clamp(64px,9vw,84px);height:clamp(64px,9vw,84px);font-size:30px}
+  #bR{left:calc(clamp(14px,2.5vw,40px) + clamp(76px,10.5vw,98px))}
+  #bJump{right:calc(clamp(14px,2.5vw,40px) + clamp(90px,12vw,112px))}
+  #bGo{width:clamp(76px,10vw,96px);height:clamp(76px,10vw,96px)}
+  #bStop{right:calc(clamp(14px,2.5vw,40px) + 10px);bottom:calc(var(--pb) + clamp(76px,10vw,96px) + 32px);width:56px;height:56px}
+  .logo{font-size:clamp(28px,9vh,44px)}
+  .flagbar{margin:6px auto 4px;height:7px}
+  .grades{margin-top:8px;gap:10px}
+  .gcard{width:clamp(120px,17vw,180px);padding:6px 8px 8px;border-radius:16px}
+  .gcard .g{font-size:19px}.gcard .a{font-size:28px;margin:0}.gcard .r{font-size:13px;min-height:0;margin-top:0}
+  #title .row{margin-top:10px!important}
+  .btn{font-size:17px;padding:.3em 1.1em;box-shadow:0 4px 0 #8a5a12,0 8px 16px rgba(0,0,0,.4)}
+  .panel{padding:8px 18px 12px;border-radius:18px}
+  .panel h2{font-size:21px;margin-bottom:0}
+  .small{font-size:13px}
+  .heroes{margin:4px 0;gap:14px}
+  .hcard{width:clamp(76px,11vw,100px);border-radius:14px}
+  .hcard div{padding:2px;font-size:16px}
+  .cls{margin:4px 0;gap:6px}
+  .chip{font-size:17px;min-height:44px;padding:.1em .6em;min-width:56px}
+  #setup .small[style]{margin-top:2px!important}
+  #setup .row{margin-top:8px!important}
+  .keypad{grid-template-columns:repeat(3,64px);gap:6px;margin:6px auto}
+  .keypad button{height:44px;font-size:22px}
+  #codeShow{font-size:30px;min-height:1.2em}
+  table.lb{font-size:15px;margin:4px auto}
+  table.lb td,table.lb th{padding:3px 10px}
+  .stars{font-size:30px;margin:2px 0}
+  /* إعداد الفريق: الأبطال في عمود والاختيارات في عمود */
+  #setup .panel{display:grid;grid-template-columns:auto 1fr;column-gap:18px;align-items:center;max-width:96vw}
+  #setup .panel>h2{grid-column:1/-1}
+  #setup .panel>:nth-child(2){grid-column:1;grid-row:2}
+  #setup .panel>#heroes{grid-column:1;grid-row:3/span 4;margin:0}
+  #setup .panel>:nth-child(4){grid-column:2;grid-row:2;margin:0!important}
+  #setup .panel>#sections{grid-column:2;grid-row:3}
+  #setup .panel>:nth-child(6){grid-column:2;grid-row:4}
+  #setup .panel>#groups{grid-column:2;grid-row:5}
+  #setup .panel>.row{grid-column:2;grid-row:6}
+  /* فتح مستوى: لوحة الأرقام بجانب الرمز */
+  #unlock .panel{display:grid;grid-template-columns:auto auto;column-gap:22px;align-items:center}
+  #unlock .panel>#keypad{grid-column:2;grid-row:1/span 5;margin:0}
+  #unlock .panel>:not(#keypad){grid-column:1}
+}
+@media (max-aspect-ratio:1/1) and (max-width:380px){
+  .logo{font-size:36px}.flagbar{margin:6px auto 2px}
+  .grades{margin-top:8px;gap:8px}
+  .gcard{width:calc(50% - 6px);max-width:150px;padding:6px 6px 8px}
+  .gcard .g{font-size:19px}.gcard .a{font-size:28px}.gcard .r{font-size:12.5px;margin-top:0}
+  #title .row{margin-top:10px!important;gap:8px;flex-wrap:nowrap}
+  .btn{font-size:15px;padding:.4em .8em}
+  .panel h2{font-size:20px;margin-bottom:2px}
+  .heroes{margin:4px 0;gap:12px}
+  .hcard{width:108px}.hcard div{padding:2px;font-size:17px}
+  .chip{font-size:17px;min-width:56px;padding:.1em .5em}
+  .cls{gap:6px;margin:4px 0}
+  #setup .row{margin-top:8px!important}
+  .keypad{grid-template-columns:repeat(3,64px);gap:8px}
+  .keypad button{height:50px}
+}
+@media (max-height:360px){
+  .logo{font-size:26px}.flagbar{margin:4px auto 2px}
+  .gcard{padding:4px 6px 6px}.gcard .a{font-size:22px}.gcard .r{font-size:12px}
+  .grades{margin-top:6px}
+}
+</style>
+<script type="importmap">{"imports":{"three":"./lib/three.module.min.js","three/addons/":"./lib/jsm/"}}</script>
+</head>
+<body>
+<canvas id="c"></canvas>
+
+<div id="loading"><div class="t">جارٍ تجهيز الرحلة…</div><div class="bar"><i id="loadbar"></i></div><div class="small" id="loadtxt"></div></div>
+
+<!-- شاشة العنوان -->
+<div class="screen" id="title">
+  <div class="logo">سلّة الخير<small>رحلة إلى بيت الجدّة</small></div>
+  <div class="flagbar"></div>
+  <div class="small">بطولة العيد الوطني المجيد • الحلقة الأولى</div>
+  <div class="grades" id="grades"></div>
+  <div class="row" style="margin-top:22px">
+    <button class="btn ghost" id="btnBoard">🏆 لوحة البطولة</button>
+    <button class="btn ghost" id="btnUnlock">🔑 فتح مستوى</button>
+  </div>
+</div>
+
+<!-- إعداد الفريق -->
+<div class="screen" id="setup">
+  <div class="panel">
+    <h2 id="setupTitle">الصف الأول</h2>
+    <div class="small">اختاروا البطل أو البطلة</div>
+    <div class="heroes" id="heroes"></div>
+    <div class="small" style="margin-top:6px">الشعبة</div>
+    <div class="cls" id="sections"></div>
+    <div class="small" style="margin-top:6px">عدد المجموعات في الصف</div>
+    <div class="cls" id="groups"></div>
+    <div class="row" style="margin-top:16px">
+      <button class="btn" id="btnStart">▶ ابدأ الرحلة</button>
+      <button class="btn ghost" id="btnBack">رجوع</button>
+    </div>
+  </div>
+</div>
+
+<!-- النتيجة -->
+<div class="screen" id="result">
+  <div class="panel" id="resultBox"></div>
+</div>
+
+<!-- لوحة البطولة -->
+<div class="screen" id="board">
+  <div class="panel" id="boardBox"></div>
+</div>
+
+<!-- فتح مستوى -->
+<div class="screen" id="unlock">
+  <div class="panel">
+    <h2>🔑 أدخلوا رمز الفوز</h2>
+    <div class="small">يظهر الرمز للصف الفائز في لوحة البطولة</div>
+    <div id="codeShow"></div>
+    <div class="keypad" id="keypad"></div>
+    <div class="small" id="codeMsg" style="min-height:1.6em"></div>
+    <button class="btn ghost" id="unlockBack">رجوع</button>
+  </div>
+</div>
+
+<!-- الواجهة أثناء اللعب -->
+<div id="hud">
+  <div class="top">
+    <div class="pill">⭐ <b id="hStars">0</b> / <span id="hMax">7</span></div>
+    <div class="pill">🌴 <b id="hDates">0</b></div>
+    <div class="pill">⏱ <b id="hTime">0:00</b></div>
+  </div>
+  <div id="prog"><div id="progFill"></div><div id="progHero">🧺</div><div id="progHouse">🏡</div></div>
+  <div id="stageName"></div>
+  <div id="qbar"></div>
+  <div id="sub"></div>
+  <div id="toast"></div>
+</div>
+<div id="topBtns"><div class="ibtn" id="bMute" title="الصوت">🔊</div><div class="ibtn" id="bPause" title="إيقاف مؤقت">⏸</div><div class="ibtn" id="bRepeat" title="أعد قراءة السؤال">🔁</div><div class="ibtn" id="bRestart" title="ابدأ الجولة من جديد">⟲</div><div class="ibtn" id="bExit" title="إنهاء والعودة للقائمة">🏠</div></div>
+
+<div id="pad">
+  <div class="cbtn" id="bL"><svg viewBox="0 0 24 24"><path d="M15.5 3.5 7 12l8.5 8.5 2-2L11 12l6.5-6.5z"/></svg><span class="lbl">يسار</span></div>
+  <div class="cbtn" id="bR"><svg viewBox="0 0 24 24"><path d="M8.5 3.5 17 12l-8.5 8.5-2-2L13 12 6.5 5.5z"/></svg><span class="lbl">يمين</span></div>
+  <div class="cbtn" id="bGo"><svg viewBox="0 0 24 24"><path d="M12 3 4 13h5v8h6v-8h5z"/></svg><span class="lbl">امشِ / أسرع</span></div>
+  <div class="cbtn" id="bJump"><svg viewBox="0 0 24 24"><path d="M12 2c1.7 0 3 1.3 3 3s-1.3 3-3 3-3-1.3-3-3 1.3-3 3-3zm-6 14 4-6h4l4 6-2 1.2-2.5-3.7V22h-3v-8.5L8 17.2z"/></svg><span class="lbl">اقفز</span></div>
+  <div class="cbtn" id="bStop"><svg viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/></svg><span class="lbl">قف</span></div>
+</div>
+
+<script type="module" src="js/salla.js"></script>
+</body>
+</html>
