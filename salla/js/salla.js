@@ -66,7 +66,27 @@ async function loadGLB(url) {
     return await new Promise((res) => loader.parse(out, '', res, () => res(null)));
   } catch (e) { console.warn('model', url, e); return null; }
 }
-const ASSETS = {}; const LIB = {};
+const ASSETS = {}; const LIB = {}; const LIBSRC = {};
+// وضعية الراحة لكل عظمة (محلية + عالمية للأب) — لإعادة توجيه الحركات بين هياكل مختلفة دون التواء
+function restInfo(root) {
+  root.updateMatrixWorld(true); const m = {};
+  root.traverse((o) => { if (!o.isBone && !/^mixamorig/.test(o.name)) return; if (m[o.name]) return; const pw = new THREE.Quaternion(); if (o.parent) o.parent.getWorldQuaternion(pw); m[o.name] = { l: o.quaternion.clone(), pw }; });
+  return m;
+}
+const _q1 = new THREE.Quaternion(), _q2 = new THREE.Quaternion(), _q3 = new THREE.Quaternion();
+function retarget(clip, src, dst) {
+  if (!src || !dst) return clip;
+  for (const t of clip.tracks) {
+    if (!/quaternion$/.test(t.name)) continue;
+    const b = t.name.slice(0, t.name.lastIndexOf('.')); const S0 = src[b], D0 = dst[b]; if (!S0 || !D0) continue;
+    const C = S0.pw.clone().invert().multiply(D0.pw); const Ci = C.clone().invert(); const RsI = S0.l.clone().invert();
+    const v = t.values;
+    for (let i = 0; i < v.length; i += 4) {
+      _q1.fromArray(v, i); _q2.copy(Ci).multiply(_q1).multiply(RsI).multiply(C).multiply(D0.l); _q2.normalize().toArray(v, i);
+    }
+  }
+  return clip;
+}
 const NPC_FILES = ['mother', 'grandma', 'grandpa', 'neighbor', 'wolf', 'fox', 'hyena', 'leopard', 'falcon', 'camel'];
 const HEIGHTS = { salim: 1.32, shamsa: 1.32, mother: 1.68, grandma: 1.6, grandpa: 1.72, neighbor: 1.76, wolf: 1.55, fox: 1.4, hyena: 1.45, leopard: 1.5, falcon: 0.9, camel: 2.3, oryx: 1.35, hen: 0.55 };
 
@@ -93,7 +113,7 @@ async function loadAll(onp) {
   await Promise.all(jobs.map(async ([kind, id, url]) => {
     const g = await loadGLB(url); done++; onp(done / jobs.length, id);
     if (!g) return;
-    if (kind === 'anim') { for (const c of g.animations) if (!LIB[c.name]) LIB[c.name] = c; if (id === 'razha' && g.animations[0]) LIB.Razha = g.animations[0]; return; }
+    if (kind === 'anim') { const ri = restInfo(g.scene); for (const c of g.animations) if (!LIB[c.name]) { LIB[c.name] = c; LIBSRC[c.name] = ri; } if (id === 'razha' && g.animations[0]) LIB.Razha = g.animations[0]; return; }
     ASSETS[id] = prepModel(g, id);
   }));
 }
@@ -111,7 +131,9 @@ class Actor {
         this.mixer = new THREE.AnimationMixer(this.model);
         const isHero = id === 'salim' || id === 'shamsa';
         const clips = {};
-        for (const [k, c] of Object.entries(LIB)) clips[k] = cleanClip(c, isHero);
+        const ri = restInfo(this.model); for (const [k, c] of Object.entries(LIB)) clips[k] = retarget(cleanClip(c, isHero), LIBSRC[k], ri);
+        // ثوب الجدّة مربوط بالساقين: نُثبّت الساقين في حركات الوقوف والتلويح حتى لا يطير الثوب
+        if (id === 'grandma') for (const [k, c] of Object.entries(clips)) c.tracks = c.tracks.filter((t) => !/position$/.test(t.name)).map((t) => { if (/(Neck|Head)\.quaternion$/.test(t.name)) return t; const r = ri[t.name.slice(0, -11)]; if (!r) return t; const v = r.l.toArray(); return new THREE.QuaternionKeyframeTrack(t.name, [0, c.duration], [...v, ...v]); });
         for (const [k, c] of Object.entries(a.clips)) clips[k] = cleanClip(c, isHero);
         // وقفة الانتظار: نأخذ الذراعين والساقين من Idle_02 والجذع والرقبة والرأس مستقيمة من Wave (كانت Idle_02 تَطوي الجسم من الوسط)
         if (clips.Idle_02 && clips.Wave_One_Hand) {
@@ -124,6 +146,7 @@ class Actor {
           });
           clips.Idle_02 = fix;
         }
+        if (id === 'grandma' && clips.Idle_02) { clips.Walking = clips.Idle_02.clone(); clips.Running = clips.Idle_02.clone(); }
         const names = new Set(); this.model.traverse((o) => names.add(o.name));
         for (const c of Object.values(clips)) c.tracks = c.tracks.filter((t) => names.has(t.name.split('.')[0]));
         for (const [k, c] of Object.entries(clips)) this.actions[k] = this.mixer.clipAction(c);
@@ -567,7 +590,7 @@ function countdown(sec) {
   el.style.display = 'flex';
   return new Promise(async (res, rej) => {
     // العدّ يتوقف مع الإيقاف المؤقت، وإعادة البدء/الخروج تُلغيه (ولا يُكمل المشهد القديم على الجولة الجديدة)
-    try { for (let k = sec; k > 0; k--) { while (paused) await sleep(200); el.innerHTML = `<span>${k}</span>`; el.firstChild.animate([{ transform: 'scale(1.5)', opacity: 0.4 }, { transform: 'scale(1)', opacity: 1 }], 300); audio.sfx('coin'); await sleep(1000); }
+    try { for (let k = sec; k > 0; k--) { while (paused) await sleep(200); el.innerHTML = `<span>${k}</span>`; el.firstChild.animate([{ transform: 'scale(1.5)', opacity: 0.4 }, { transform: 'scale(1)', opacity: 1 }], 300); await sleep(1000); }
       el.innerHTML = '🧠'; await sleep(500); }
     catch (e) { el.style.display = 'none'; rej(e); return; }
     el.style.display = 'none'; res();
@@ -620,7 +643,7 @@ async function stationPass(o) {
   S.awaitGate = false; S.speed = 0; S.walk = 0;
   const T = S.station, sc = S.stScope, id = (k) => `${S.stIdx}_${k}`;
   if (o.correct) {
-    const bonus = S.tries === 0 ? 3 : 1; S.dates += bonus; updHud();
+    const bonus = S.tries === 0 ? 3 : 0; S.dates += bonus; updHud();
     audio.sfx('correct'); confetti(o.g.position.clone().add(new THREE.Vector3(0, 2.5, 0)), GATE_COLORS[o.i].hex);
     toast(`🧠 تفكير ذكي! +${bonus} 🌴`, '#ffdf8c', 1800); S.hero.play('cheer', 0.15);
     S.mode = 'cine'; S.camT = { pos: new THREE.Vector3(S.x + 1.8, 1.9, S.z - 3.2), look: new THREE.Vector3(S.x, 1.2, S.z + 4) };
@@ -685,7 +708,7 @@ async function passGate(o) {
   if (S.station) return stationPass(o);
   S.awaitGate = false; S.speed = 0; S.walk = 0;
   if (o.correct) {
-    const got = S.tries === 0 ? 1 : S.tries === 1 ? 0.5 : 0; S.stars += got; updHud();
+    const got = S.tries === 0 ? 1 : 0; /* بعد خطأ: يمرّ دون نجمة */ S.stars += got; updHud();
     audio.sfx('correct'); if (got) audio.sfx('star');
     confetti(o.g.position.clone().add(new THREE.Vector3(0, 2.5, 0)), GATE_COLORS[o.i].hex);
     toast(got === 1 ? '⭐ +1' : got ? '⭐ +½' : '👏', '#ffdf8c');
@@ -741,63 +764,96 @@ function updFX(dt) {
 }
 function fireworks(center, n = 6) { for (let i = 0; i < n; i++) setTimeout(() => { if (!scene) return; confetti(center.clone().add(new THREE.Vector3(rand(-6, 6), rand(6, 11), rand(-3, 6))), ['#c8102e', '#12813f', '#ffffff', '#ffd76a'][i % 4]); audio.sfx('fireworks'); }, i * 450); }
 
+// باب بيت الجدّة: مصراعان يُفتحان للخارج ويظهر خلفهما مدخل مظلم
+function makeDoor(hz) {
+  const g = new THREE.Group(); const dw = 2.6, dh = 3.7, z = hz - 0.14;
+  const hole = new THREE.Mesh(new THREE.PlaneGeometry(dw, dh), new THREE.MeshBasicMaterial({ color: 0x1a0f08 }));
+  hole.position.set(0, dh / 2, z); hole.rotation.y = Math.PI; g.add(hole);
+  const wood = new THREE.MeshStandardMaterial({ color: 0x6b3a1e, roughness: 0.8 });
+  const stud = new THREE.MeshStandardMaterial({ color: 0xd9a441, metalness: 0.6, roughness: 0.4 });
+  const leaves = [];
+  for (const sx of [-1, 1]) {
+    const pv = new THREE.Group(); pv.position.set(sx * dw / 2, 0, z - 0.02);
+    const leaf = new THREE.Mesh(new THREE.BoxGeometry(dw / 2, dh, 0.08), wood); leaf.position.set(-sx * dw / 4, dh / 2, 0); pv.add(leaf);
+    for (let i = 0; i < 6; i++) { const st = new THREE.Mesh(new THREE.SphereGeometry(0.04, 6, 4), stud); st.position.set(-sx * dw / 4, 0.4 + i * 0.6, -0.05); pv.add(st); }
+    g.add(pv); leaves.push([pv, sx]);
+  }
+  g.visible = false; scene.add(g);
+  return { g, async open() { g.visible = true; audio.sfx('door'); for (let t = 0; t <= 1.001; t += 0.05) { for (const [pv, sx] of leaves) pv.rotation.y = sx * -1.35 * t; await sleep(20); } } };
+}
+
+async function waitWalk(a, x, z, max) {
+  const t0 = performance.now(); while (S.walkTo && performance.now() - t0 < max) { while (paused) await sleep(200); await sleep(100); }
+  S.walkTo = null; a.root.position.set(x, 0, z);
+}
+
 async function doorScene() {
   S.mode = 'cine'; S.timing = false; S.speed = 0; S.hero.play('idle');
   const hz = world.houseZ; const st = STORY[S.grade];
-  S.z = hz - 7; S.x = 0; S.hero.root.position.set(0, 0, S.z);
+  // البطل يصل إلى الباب، والجدّ جالس في مجلس الساحة
+  const P = S.grandpa; P.root.visible = true; P.root.position.set(-7.6, 0, hz - 9.4); P.root.lookAt(0, 0, hz - 6); P.play('idle');
+  S.z = hz - 5.2; S.x = 0.9; S.hero.root.position.set(0.9, 0, S.z); S.hero.root.rotation.y = 0;
   await sayL('c', 'almost', COMMON.almost);
-  const A = S.animal; A.root.visible = true; A.root.position.set(0.3, 0, hz - 0.8); A.root.rotation.y = 0; A.play('idle');
-  S.camT = { pos: new THREE.Vector3(3.4, 2.0, hz - 9.5), look: new THREE.Vector3(0, 1.3, hz - 1) };
-  audio.playTheme('tension'); audio.sfx('door');
+  // البطل يطرق الباب… والحيوان يردّ من الداخل متظاهرًا بأنه الجدّة
+  const A = S.animal; A.root.visible = false; S.faceHero = null;
+  S.camT = { pos: new THREE.Vector3(3.2, 2.0, hz - 10.5), look: new THREE.Vector3(0.4, 1.5, hz - 1) };
+  S.hero.play('wave'); audio.sfx('door'); await sleep(900); S.hero.play('idle');
   for (let k = 0; k < st.door.length; k++) {
     const ln = st.door[k];
-    if (ln.who === 'animal') { S.faceCam = A; A.play('wave'); } else S.faceCam = null;
-    await sayL(`s${S.grade}`, `door${k}`, ln); A.play('idle');
+    if (ln.who === 'hero') S.camT = { pos: new THREE.Vector3(2.4, 1.5, S.z - 3.2), look: new THREE.Vector3(0.6, 1.1, S.z + 1) };
+    else S.camT = { pos: new THREE.Vector3(0.6, 1.8, hz - 6.5), look: new THREE.Vector3(0, 1.7, hz) };
+    await sayL(`s${S.grade}`, `door${k}`, ln);
   }
-  S.faceCam = null;
-  S.hero.play('wave');
-  S.camT = { pos: new THREE.Vector3(1.4, 1.5, S.z - 2.6), look: new THREE.Vector3(0, 1.1, S.z) };
+  S.hero.root.lookAt(P.root.position.x, 0, P.root.position.z); S.hero.play('wave');
+  S.camT = { pos: new THREE.Vector3(2.6, 1.6, S.z - 3.4), look: new THREE.Vector3(-2, 1.1, S.z - 1) };
   await sayL('c', 'callGrandpa', COMMON.callGrandpa);
-  // الجدّ يأتي
-  const P = S.grandpa; P.root.visible = true; P.root.position.set(7, 0, hz - 3.5); P.play('walk');
-  S.walkTo = { a: P, x: 1.8, z: hz - 3.2, speed: 2.2 };
-  S.camT = { pos: new THREE.Vector3(-3.5, 2.2, hz - 9), look: new THREE.Vector3(1.8, 1.3, hz - 2.5) };
-  await sleep(2200); P.play('idle'); P.root.lookAt(A.root.position.x, 0, A.root.position.z);
+  S.hero.play('idle');
+  // الجدّ يقوم من المجلس ويأتي إلى الباب
+  P.play('walk'); S.walkTo = { a: P, x: -1.6, z: hz - 3.6, speed: 1.8 };
+  S.camT = { pos: new THREE.Vector3(3.5, 2.2, hz - 11), look: new THREE.Vector3(-2.5, 1.3, hz - 4) };
+  await waitWalk(P, -1.6, hz - 3.6, 15000); P.play('idle'); P.root.lookAt(0, 0, hz);
+  S.hero.root.rotation.y = 0;
   await sayL(`s${S.grade}`, 'grandpa', st.grandpa);
-  A.play('run'); audio.sfx(S.G.animal); S.walkTo = { a: A, x: 1.2, z: hz - 45, speed: 8, hide: true };
+  // الباب يُفتح والحيوان يهرب
+  const D = S.door || (S.door = makeDoor(hz)); await D.open();
+  A.root.visible = true; A.root.position.set(0, 0, hz + 0.4); A.play('run'); audio.sfx(S.G.animal);
+  S.walkTo = { a: A, x: 9, z: hz - 40, speed: 7, hide: true };
+  S.camT = { pos: new THREE.Vector3(-2.5, 2.4, hz - 12), look: new THREE.Vector3(2, 1.2, hz - 5) };
   await sayL(`s${S.grade}`, 'flee', st.flee);
-  P.root.lookAt(0, 0, S.z);
+  await waitWalk(A, 9, hz - 40, 6000); A.root.visible = false;
+  P.root.lookAt(S.x, 0, S.z); S.hero.root.lookAt(P.root.position.x, 0, P.root.position.z);
+  S.camT = { pos: new THREE.Vector3(1.5, 1.8, hz - 9.5), look: new THREE.Vector3(-0.6, 1.2, hz - 4) };
   await sayL('c', 'grandpaFinal', COMMON.grandpaFinal);
   S.finalQ = true;
   await askQuestion(true);
-  S.mode = 'cine'; S.timing = false;
-  // الباب يُفتح والجدّة تخرج
-  audio.playTheme('victory'); audio.sfx('ululation');
-  const M = S.grandma; M.root.visible = true; M.root.position.set(0, 0, hz + 0.6); M.play('walk'); S.walkTo = { a: M, x: -0.9, z: hz - 2.6, speed: 1.6 };
-  S.camT = { pos: new THREE.Vector3(0.3, 2.0, hz - 10.5), look: new THREE.Vector3(0, 1.3, hz - 2) };
-  await sleep(2000); M.play('idle'); M.root.lookAt(0, 0, S.z);
+  S.mode = 'cine'; S.timing = false; S.walkTo = null;
+  // الجدّة تخرج من الباب المفتوح
+  S.hero.root.position.set(0.9, 0, hz - 5.2); S.x = 0.9; S.z = hz - 5.2; S.hero.root.rotation.y = 0; S.hero.play('idle');
+  P.root.position.set(-1.6, 0, hz - 3.6); P.play('idle'); P.root.lookAt(0.9, 0, hz - 5.2);
+  const M = S.grandma; M.root.visible = true; M.root.position.set(0, 0, hz + 0.6); M.play('walk'); S.walkTo = { a: M, x: 0.2, z: hz - 2.8, speed: 1.4 };
+  S.camT = { pos: new THREE.Vector3(0.6, 2.0, hz - 11), look: new THREE.Vector3(0, 1.3, hz - 2.5) };
+  await waitWalk(M, 0.2, hz - 2.8, 10000); M.play('idle'); M.root.lookAt(0.9, 0, hz - 5.2);
   await sayL('c', 'grandma', COMMON.grandma);
-  // احتفال
-  S.mother.root.position.set(2.8, 0, hz - 4.5); S.mother.root.visible = true; S.mother.root.lookAt(0, 0, S.z);
-  [S.hero, M, P, S.mother].forEach((a, i) => a.play(i === 0 ? 'dance' : (a.actions.Razha ? 'razha' : 'dance')));
-  fireworks(new THREE.Vector3(0, 0, hz)); confetti(new THREE.Vector3(0, 3, S.z + 1), '#ffd76a');
-  S.camT = { pos: new THREE.Vector3(0, 3.4, hz - 14), look: new THREE.Vector3(0, 1.4, hz - 3), orbit: true };
+  S.hero.play('cheer', 0.2); confetti(new THREE.Vector3(0, 3, S.z + 1), '#ffd76a'); confetti(new THREE.Vector3(-1, 4, hz - 2), '#12813f');
+  S.camT = { pos: new THREE.Vector3(0, 3.0, hz - 13), look: new THREE.Vector3(0, 1.4, hz - 3.5) };
   await sayL('c', 'outro', COMMON.outro);
-  await sleep(1500);
+  await sleep(1200);
   endRun();
 }
 
 // ───────────── النتيجة ولوحة البطولة ─────────────
+const score = (st, d) => Math.round(st * 10 + d); const rowScore = (r) => r.score ?? score(r.stars, r.dates || 0);
 function boardData() { return store.get('salla_board_v1', {}); }
 function unlocked() { return store.get('salla_unlock_v1', [1]); }
 function endRun() {
   S.mode = 'end'; hud(false);
-  const b = boardData(); (b[S.grade] ||= []).push({ cls: S.cls, stars: S.stars, max: S.G.nQ, time: Math.round(S.time), dates: S.dates, ts: Date.now() }); store.set('salla_board_v1', b);
+  const b = boardData(); (b[S.grade] ||= []).push({ cls: S.cls, stars: S.stars, max: S.G.nQ, time: Math.round(S.time), dates: S.dates, score: score(S.stars, S.dates), ts: Date.now() }); store.set('salla_board_v1', b);
   const full = Math.floor(S.stars), half = S.stars % 1 ? '✨' : '';
   $('#resultBox').innerHTML = `<h2>🎉 أحسنتم يا ${S.cls}!</h2>
     <div class="stars">${'⭐'.repeat(full)}${half}</div>
-    <div style="font-size:clamp(22px,2.4vw,34px)">النجوم: <b style="color:var(--gold2)">${S.stars}</b> من ${S.G.nQ} • الزمن: <b style="color:var(--gold2)">${fmt(S.time)}</b> • التمر: ${S.dates}</div>
-    <div class="small" style="margin:8px 0">الترتيب في البطولة: النجوم أولًا، والزمن عند التعادل فقط</div>
+    <div style="font-size:clamp(22px,2.4vw,34px)">⭐ النجوم: <b style="color:var(--gold2)">${S.stars}</b> من ${S.G.nQ} • 🌴 التمر: <b style="color:var(--gold2)">${S.dates}</b> • ⏱️ الزمن: <b style="color:var(--gold2)">${fmt(S.time)}</b></div>
+    <div style="font-size:clamp(26px,3vw,42px);margin-top:6px">🏅 المجموع: <b style="color:var(--gold2)">${score(S.stars, S.dates)}</b> نقطة</div>
+    <div class="small" style="margin:8px 0">كل نجمة = 10 نقاط، وكل تمرة = نقطة. والزمن يحسم التعادل فقط</div>
     <div class="row" style="margin-top:12px"><button class="btn" id="rBoard">🏆 لوحة البطولة</button><button class="btn ghost" id="rHome">القائمة</button></div>`;
   showScreen('result');
   $('#rBoard').onclick = () => openBoard(S.grade); $('#rHome').onclick = toTitle;
@@ -805,10 +861,10 @@ function endRun() {
 function openBoard(grade = 1) {
   const b = boardData();
   const tabs = [1, 2, 3, 4].map((g) => `<button class="chip ${g === grade ? 'sel' : ''}" data-g="${g}">${GRADES[g].title}</button>`).join('');
-  const rows = (b[grade] || []).slice().sort((p, q) => q.stars - p.stars || p.time - q.time);
+  const rows = (b[grade] || []).slice().sort((p, q) => rowScore(q) - rowScore(p) || p.time - q.time);
   const nextCode = GRADES[grade + 1]?.code;
   $('#boardBox').innerHTML = `<h2>🏆 لوحة البطولة</h2><div class="cls">${tabs}</div>
-    ${rows.length ? `<table class="lb"><tr><th>الترتيب</th><th>الصف</th><th>النجوم</th><th>الزمن</th></tr>${rows.map((r, i) => `<tr class="${i === 0 ? 'win' : ''}"><td>${i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : i + 1}</td><td>${r.cls}</td><td>${r.stars} / ${r.max}</td><td>${fmt(r.time)}</td></tr>`).join('')}</table>` : '<p class="small" style="margin:20px">لم يلعب أي صف بعد</p>'}
+    ${rows.length ? `<table class="lb"><tr><th>الترتيب</th><th>الصف</th><th>النجوم</th><th>التمر</th><th>المجموع</th><th>الزمن</th></tr>${rows.map((r, i) => `<tr class="${i === 0 ? 'win' : ''}"><td>${i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : i + 1}</td><td>${r.cls}</td><td>${r.stars} / ${r.max}</td><td>${r.dates ?? 0}</td><td><b>${rowScore(r)}</b></td><td>${fmt(r.time)}</td></tr>`).join('')}</table>` : '<p class="small" style="margin:20px">لم يلعب أي صف بعد</p>'}
     ${rows.length && nextCode ? `<div id="winBox"><button class="btn" id="showCode">🔑 أعلنوا الفائز واعرضوا رمز ${GRADES[grade + 1].title}</button></div>` : ''}
     <div class="row" style="margin-top:14px"><button class="btn ghost" id="bClear">مسح نتائج هذا الصف</button><button class="btn ghost" id="bHome">القائمة</button></div>`;
   showScreen('board');
@@ -1086,7 +1142,7 @@ function frame() {
 })();
 
 // أدوات الاختبار
-window.__game = { get S() { return S; }, startRun, skip: () => skipLine && skipLine(), camera, get scene() { return scene; }, renderer };
+window.__game = { get S() { return S; }, startRun, doorScene: () => doorScene(), skip: () => skipLine && skipLine(), camera, get scene() { return scene; }, renderer };
 
 // تشخيص (يظهر فقط مع ‎#dbg في الرابط)
 if (location.hash === '#dbg') { const d = document.createElement('div'); d.style.cssText = 'position:fixed;top:4px;left:40%;z-index:99;background:#000c;color:#0f0;font:12px monospace;padding:4px'; document.body.appendChild(d);
