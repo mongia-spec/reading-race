@@ -974,6 +974,18 @@ function simWorldEvents() {
   const p = clamp(S.z / world.houseZ, 0, 1); $('#progFill').style.width = `${p * 100}%`; $('#progHero').style.left = `${p * 100}%`;
 }
 
+
+// إيماءة الرأس أثناء الكلام دون تراكم: إن لم يُعِد الخالطُ ضبطَ العظمة نرجعها لوضعها الأصلي قبل الإضافة
+const _nq = new THREE.Quaternion(), _ne = new THREE.Euler();
+function headNod(A, x, z, reset) {
+  const h = A._head; if (!h || h === -1) return;
+  if (A._hq && h.quaternion.equals(A._hq)) h.quaternion.copy(A._hb);
+  if (reset) { A._hq = null; return; }
+  if (!A._hb) A._hb = new THREE.Quaternion();
+  A._hb.copy(h.quaternion);
+  h.quaternion.multiply(_nq.setFromEuler(_ne.set(x, 0, z)));
+  if (!A._hq) A._hq = new THREE.Quaternion(); A._hq.copy(h.quaternion);
+}
 const _hv = new THREE.Vector3();
 function simActors(dt) {
   if (S.hero) {
@@ -985,7 +997,9 @@ function simActors(dt) {
   else if (S.faceHero && S.faceHero.root.visible && !S.walkTo) { const hp = S.hero.root.position; S.faceHero.root.lookAt(hp.x, 0, hp.z); }
   if (S.talker) { const map = { hero: S.hero, mom: S.mother, animal: S.animal, grandpa: S.grandpa, grandma: S.grandma, falcon: S.falcon }; const A = map[S.talker];
     if (A && A.root.visible) { if (!A._head) A._head = A.bone(/Head$/) || -1; S._tt = (S._tt || 0) + dt; const k = Math.abs(Math.sin(S._tt * 11)) * 0.09 + Math.sin(S._tt * 3.1) * 0.04;
-      if (A._head !== -1) { A._head.rotation.x += k; A._head.rotation.z += Math.sin(S._tt * 2.3) * 0.05; } else A.model.rotation.x = k * 0.5; } }
+      if (A._head !== -1) headNod(A, k * 0.6, Math.sin(S._tt * 2.3) * 0.03); else A.model.rotation.x = k * 0.5; } }
+  for (const A of [S.hero, S.mother, S.animal, S.grandpa, S.grandma, S.falcon]) if (A && A._hq && (!S.talker || ({ hero: S.hero, mom: S.mother, animal: S.animal, grandpa: S.grandpa, grandma: S.grandma, falcon: S.falcon })[S.talker] !== A)) { headNod(A, 0, 0, true); }
+  for (const A of [S.hero, S.mother, S.animal, S.grandpa, S.grandma, S.falcon]) if (A && A._head === -1 && A.model && (!S.talker || ({ hero: S.hero, mom: S.mother, animal: S.animal, grandpa: S.grandpa, grandma: S.grandma, falcon: S.falcon })[S.talker] !== A)) A.model.rotation.x = 0;
   const w = S.walkTo;
   if (w) {
     const r = w.a.root; const dx = w.x - r.position.x, dz = w.z - r.position.z; const d = Math.hypot(dx, dz);
