@@ -1,3 +1,4 @@
+// © 2026 الأستاذة منجية عادل (Mongia Adel) — جميع الحقوق محفوظة. لعبة «سلّة خير عُمان». إنستغرام @ostatha.mongia • يوتيوب @shtshout
 // «سلّة الخير: رحلة إلى بيت الجدّة» — لعبة ثلاثية الأبعاد للحلقة الأولى (الصفوف 1–4)
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
@@ -342,6 +343,23 @@ const readMs = (t) => clamp(t.length * 75, 1600, 9000);
 // ───────────── حالة اللعبة ─────────────
 let S = null; // حالة الجولة
 let muted = false, paused = false;
+// ───────────── أغنية «عُمانُ عُمانُ يا فخري يا بلادي» (شاشة البداية وشاشة الفوز) ─────────────
+const SONG = new Audio('audio/song.mp3'); SONG.preload = 'auto'; SONG.loop = true;
+let songWant = 0;
+function songTo(vol, from) {
+  songWant = vol;
+  if (from != null) { try { SONG.currentTime = from; } catch (e) { /* قبل التحميل */ SONG.addEventListener('loadedmetadata', () => { SONG.currentTime = from; }, { once: true }); } }
+  if (vol > 0 && SONG.paused && !muted) SONG.play().catch(() => {});
+}
+setInterval(() => {
+  const tgt = muted ? 0 : songWant; const v = SONG.volume;
+  SONG.volume = Math.abs(tgt - v) < 0.04 ? tgt : v + Math.sign(tgt - v) * 0.04;
+  if (SONG.volume === 0 && !SONG.paused && (tgt === 0)) SONG.pause();
+  if (tgt > 0 && SONG.paused) SONG.play().catch(() => {});
+}, 60);
+// المتصفح لا يسمح بالصوت قبل أول لمسة: نبدأ الأغنية عند أول لمسة على الشاشة
+addEventListener('pointerdown', () => { if (songWant > 0 && SONG.paused && !muted) SONG.play().catch(() => {}); });
+
 const input = { left: false, right: false, jumpQ: false, goToggle: 0, stop: false };
 const ui = { title: $('#title'), setup: $('#setup'), result: $('#result'), board: $('#board'), unlock: $('#unlock') };
 function showScreen(id) { document.querySelectorAll('.screen').forEach((s) => s.classList.toggle('on', s.id === id)); }
@@ -364,6 +382,7 @@ function pickQuestions(grade, n) {
 }
 
 async function startRun(grade, sex, cls, groups) {
+  songTo(0);
   RUN++; stopVO(); clearOverlays(); paused = false; if ($('#bPause')) $('#bPause').textContent = '⏸';
   showScreen(null); hud(true);
   const G = GRADES[grade];
@@ -867,7 +886,7 @@ function endRun() {
     <div style="font-size:clamp(26px,3vw,42px);margin-top:6px">🏅 المجموع: <b style="color:var(--gold2)">${score(S.stars, S.dates)}</b> نقطة</div>
     <div class="small" style="margin:8px 0">كل نجمة = 10 نقاط، وكل تمرة = نقطة. والزمن يحسم التعادل فقط</div>
     <div class="row" style="margin-top:12px"><button class="btn" id="rBoard">🏆 لوحة البطولة</button><button class="btn ghost" id="rHome">القائمة</button></div>`;
-  showScreen('result');
+  showScreen('result'); SONG.volume = 0; songTo(0.7, 137); // من اللازمة الأخيرة إلى الختام
   $('#rBoard').onclick = () => openBoard(S.grade); $('#rHome').onclick = toTitle;
 }
 function openBoard(grade = 1) {
@@ -892,7 +911,7 @@ function toastScreen(t) { const e = document.createElement('div'); e.className =
 function clearOverlays() { $('#qbar').classList.remove('show'); sub.classList.remove('show'); const c = $('#thinkClock'); if (c) c.style.display = 'none'; }
 function toTitle() {
   RUN++;
-  hud(false); stopVO(); clearOverlays(); S = null; showScreen('title'); audio.playTheme('title');
+  hud(false); stopVO(); clearOverlays(); S = null; showScreen('title'); audio.playTheme('title'); SONG.volume = 0; songTo(0.35, 0);
   const un = unlocked();
   $('#grades').innerHTML = [1, 2, 3, 4].map((g) => `<div class="gcard ${un.includes(g) ? '' : 'locked'}" data-g="${g}"><div class="g">${GRADES[g].title}</div><div class="a">${GRADES[g].emoji}</div><div class="r">${GRADES[g].route}<br>${GRADES[g].nQ} أسئلة</div></div>`).join('');
   $('#grades').querySelectorAll('.gcard').forEach((c) => (c.onclick = () => { audio.unlock(); const g = +c.dataset.g; if (!unlocked().includes(g)) { audio.sfx('wrong'); openUnlock(); return; } openSetup(g); }));
@@ -1157,7 +1176,7 @@ function frame() {
 })();
 
 // أدوات الاختبار
-window.__game = { get S() { return S; }, startRun, doorScene: () => doorScene(), skip: () => skipLine && skipLine(), camera, get scene() { return scene; }, renderer };
+window.__game = { get S() { return S; }, song: SONG, endRun: () => endRun(), startRun, doorScene: () => doorScene(), skip: () => skipLine && skipLine(), camera, get scene() { return scene; }, renderer };
 
 // تشخيص (يظهر فقط مع ‎#dbg في الرابط)
 if (location.hash === '#dbg') { const d = document.createElement('div'); d.style.cssText = 'position:fixed;top:4px;left:40%;z-index:99;background:#000c;color:#0f0;font:12px monospace;padding:4px'; document.body.appendChild(d);

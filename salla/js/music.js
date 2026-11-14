@@ -1,3 +1,4 @@
+// © 2026 الأستاذة منجية عادل (Mongia Adel) — جميع الحقوق محفوظة. لعبة «سلّة خير عُمان». إنستغرام @ostatha.mongia • يوتيوب @shtshout
 // music.js — procedural Arabian/Omani music + SFX engine (Web Audio, no samples)
 // «سلّة الخير: رحلة إلى بيت الجدّة»
 //

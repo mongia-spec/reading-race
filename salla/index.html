@@ -4,7 +4,10 @@
 <link rel="icon" href="data:,">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>سلّة خير عُمان: رحلة إلى بيت الجدّة</title>
+<title>سلّة خير عُمان: رحلة إلى بيت الجدّة — الأستاذة منجية عادل</title>
+<meta name="author" content="الأستاذة منجية عادل (Mongia Adel)">
+<meta name="copyright" content="© 2026 الأستاذة منجية عادل — جميع الحقوق محفوظة">
+<meta name="description" content="لعبة «سلّة خير عُمان» التعليمية ثلاثية الأبعاد للحلقة الأولى، فكرة وتصميم وإعداد الأستاذة منجية عادل. إنستغرام: @ostatha.mongia • يوتيوب: @shtshout">
 <style>
 @font-face{font-family:Dubai;src:url(fonts/DUBAI-BOLD.TTF);font-weight:700}
 @font-face{font-family:Dubai;src:url(fonts/DUBAI-MEDIUM.TTF);font-weight:500}
@@ -196,6 +199,13 @@ table.lb tr.win td{color:var(--gold2);font-weight:700}
   .gcard{padding:4px 6px 6px}.gcard .a{font-size:22px}.gcard .r{font-size:12px}
   .grades{margin-top:6px}
 }
+
+.credit{margin:18px auto 4px;text-align:center;background:#0b2e2bcc;border:1px solid #ffd76a55;border-radius:16px;padding:8px 14px;font-size:clamp(12px,1.15vw,16px);line-height:1.7;color:#fff;opacity:.95;max-width:92vw}
+.credit b{color:var(--gold2)}
+.credit .lk{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:6px}
+.credit a{color:#fff;text-decoration:none;background:#0008;border:1.5px solid var(--gold2);border-radius:999px;padding:4px 14px;font-weight:700}
+#hud:not(.on) ~ #wm{display:none}
+#wm{position:fixed;left:50%;bottom:max(4px,env(safe-area-inset-bottom));transform:translateX(-50%);z-index:11;pointer-events:none;font-size:clamp(10px,1vw,13px);color:#fff;opacity:.85;background:#0006;padding:1px 10px;border-radius:999px;text-shadow:0 1px 3px #000;white-space:nowrap;direction:rtl}
 </style>
 <script type="importmap">{"imports":{"three":"./lib/three.module.min.js","three/addons/":"./lib/jsm/"}}</script>
 </head>
@@ -279,5 +289,11 @@ table.lb tr.win td{color:var(--gold2);font-weight:700}
 </div>
 
 <script type="module" src="js/salla.js"></script>
+
+<!-- حقوق الملكية -->
+<div id="wm">© الأستاذة منجية عادل • إنستغرام ‎@ostatha.mongia • يوتيوب ‎@shtshout</div>
+<template id="creditTpl"><div class="credit">© 2026 جميع الحقوق محفوظة للمؤلِّفة <b>الأستاذة منجية عادل</b><br>فكرة اللعبة وقصتها وتصميمها وإعدادها: الأستاذة منجية عادل — يُمنع نسخها أو بيعها أو نسبتها لغيرها دون إذن منها
+<div class="lk"><a href="https://www.instagram.com/ostatha.mongia/" target="_blank" rel="noopener">📸 إنستغرام ‎@ostatha.mongia</a><a href="https://www.youtube.com/@shtshout" target="_blank" rel="noopener">▶️ يوتيوب ‎@shtshout</a></div></div></template>
+<script>document.querySelectorAll('.screen,#loading').forEach(function(e){e.appendChild(document.getElementById('creditTpl').content.cloneNode(true));});</script>
 </body>
 </html>

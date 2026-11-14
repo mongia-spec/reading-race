@@ -1,3 +1,4 @@
+// © 2026 الأستاذة منجية عادل (Mongia Adel) — جميع الحقوق محفوظة. لعبة «سلّة خير عُمان». إنستغرام @ostatha.mongia • يوتيوب @shtshout
 // world.js — مشاهد «سلّة الخير: رحلة إلى بيت الجدّة» ثلاثية الأبعاد (إجرائية بالكامل)
 // createWorld(THREE, scene, renderer, grade) → { length, stages, houseZ, update(dt, heroZ, camera), setStageMood(i) }
 // المسار: على المحور +Z من 0 إلى length، مستوٍ تمامًا عند y=0 وخالٍ من أي عنصر ضمن |x| ≤ 3.5.
