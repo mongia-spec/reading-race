@@ -657,7 +657,7 @@ async function stationPass(o) {
   if (o.correct) {
     const bonus = S.tries === 0 ? 3 : 0; S.dates += bonus; updHud();
     audio.sfx('correct'); confetti(o.g.position.clone().add(new THREE.Vector3(0, 2.5, 0)), GATE_COLORS[o.i].hex);
-    toast(`🧠 تفكير ذكي! +${bonus} 🌴`, '#ffdf8c', 1800); S.hero.play('cheer', 0.15);
+    toast(bonus ? `🧠 تفكير ذكي! +${bonus} 🌴` : '👍 أحسنت، وجدت الطريق', '#ffdf8c', 1800); S.hero.play('cheer', 0.15);
     S.mode = 'cine'; S.camT = { pos: new THREE.Vector3(S.x + 1.8, 1.9, S.z - 3.2), look: new THREE.Vector3(S.x, 1.2, S.z + 4) };
     await sayL(sc, id('ok'), T.ok);
     for (let t = 1; t >= 0; t -= 0.1) { S.gates.forEach((x) => x.g.scale.setScalar(Math.max(0.01, t))); await sleep(16); }
