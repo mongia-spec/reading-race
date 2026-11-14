@@ -205,6 +205,8 @@ table.lb tr.win td{color:var(--gold2);font-weight:700}
 .credit .lk{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:6px}
 .credit a{color:#fff;text-decoration:none;background:#0008;border:1.5px solid var(--gold2);border-radius:999px;padding:4px 14px;font-weight:700}
 #hud:not(.on) ~ #wm{display:none}
+#songFab{position:fixed;top:max(10px,env(safe-area-inset-top));left:max(10px,env(safe-area-inset-left));z-index:60;cursor:pointer;font-size:clamp(18px,2vw,26px);background:#0b2e2bdd;color:#fff;border:2px solid var(--gold2);border-radius:999px;padding:6px 14px;user-select:none}
+#hud.on ~ #songFab{display:none}
 #wm{position:fixed;left:50%;bottom:max(4px,env(safe-area-inset-bottom));transform:translateX(-50%);z-index:11;pointer-events:none;font-size:clamp(10px,1vw,13px);color:#fff;opacity:.85;background:#0006;padding:1px 10px;border-radius:999px;text-shadow:0 1px 3px #000;white-space:nowrap;direction:rtl}
 </style>
 <script type="importmap">{"imports":{"three":"./lib/three.module.min.js","three/addons/":"./lib/jsm/"}}</script>
@@ -223,6 +225,7 @@ table.lb tr.win td{color:var(--gold2);font-weight:700}
   <div class="row" style="margin-top:22px">
     <button class="btn ghost" id="btnBoard">🏆 لوحة البطولة</button>
     <button class="btn ghost" id="btnUnlock">🔑 فتح مستوى</button>
+    <button class="btn ghost" id="btnGuide">📘 دليل المعلم</button>
   </div>
 </div>
 
@@ -253,6 +256,27 @@ table.lb tr.win td{color:var(--gold2);font-weight:700}
   <div class="panel" id="boardBox"></div>
 </div>
 
+
+<!-- دليل المعلم -->
+<div class="screen" id="guide">
+  <div class="panel" style="text-align:right;max-width:820px;line-height:1.9">
+    <h2 style="text-align:center">📘 دليل المعلم</h2>
+    <ol style="font-size:clamp(15px,1.6vw,20px);padding-right:22px">
+      <li><b>التشغيل:</b> افتحوا الرابط على السبورة الذكية أو الحاسوب بمتصفح Chrome أو Edge، مع اتصال بالإنترنت، وانتظروا اكتمال التحميل. شغّلوا السمّاعات.</li>
+      <li><b>البداية:</b> اختاروا الصف، ثم البطل أو البطلة، والشعبة، وعدد المجموعات في الصف.</li>
+      <li><b>اللعب:</b> الطالب يحرّك البطل بأزرار الشاشة: يمين، يسار، قفز، امشِ/أسرِع، أو بأسهم لوحة المفاتيح.</li>
+      <li><b>الأسئلة:</b> تُقرأ بالصوت، والطالب يمرّ عبر بوابة الإجابة الصحيحة. اللعبة تعلن دور كل مجموعة بالتناوب.</li>
+      <li><b>محطات التفكير:</b> عشر ثوانٍ لتتناقش المجموعة، ثم تختار طريقها.</li>
+      <li><b>النتيجة:</b> كل نجمة = 10 نقاط، وكل تمرة = نقطة. الإجابة بعد خطأ تمرّ بلا نجمة. والزمن يحسم التعادل.</li>
+      <li><b>البطولة بين الشُّعب:</b> تُحفظ نتيجة كل شعبة في «لوحة البطولة» على الجهاز نفسه. العبوا كل الشعب على الجهاز نفسه لتظهر في لوحة واحدة.</li>
+      <li><b>فتح المستويات:</b> الصف الأول مفتوح. يظهر رمز المستوى التالي في لوحة البطولة بعد إعلان الفائز، أو أدخلوه من «🔑 فتح مستوى».</li>
+      <li><b>الصوت:</b> 🔊 يكتم كل الأصوات، و🎵 يوقف الأغنية فقط، و⏸ إيقاف مؤقت.</li>
+    </ol>
+    <div class="small" style="text-align:center">للملاحظات والاقتراحات: إنستغرام ‎@ostatha.mongia</div>
+    <div class="row" style="margin-top:12px;justify-content:center"><button class="btn" id="guideBack">رجوع</button></div>
+  </div>
+</div>
+
 <!-- فتح مستوى -->
 <div class="screen" id="unlock">
   <div class="panel">
@@ -278,7 +302,7 @@ table.lb tr.win td{color:var(--gold2);font-weight:700}
   <div id="sub"></div>
   <div id="toast"></div>
 </div>
-<div id="topBtns"><div class="ibtn" id="bMute" title="الصوت">🔊</div><div class="ibtn" id="bPause" title="إيقاف مؤقت">⏸</div><div class="ibtn" id="bRepeat" title="أعد قراءة السؤال">🔁</div><div class="ibtn" id="bRestart" title="ابدأ الجولة من جديد">⟲</div><div class="ibtn" id="bExit" title="إنهاء والعودة للقائمة">🏠</div></div>
+<div id="topBtns"><div class="ibtn" id="bMute" title="الصوت">🔊</div><div class="ibtn" id="bSong" title="إيقاف الأغنية">🎵</div><div class="ibtn" id="bPause" title="إيقاف مؤقت">⏸</div><div class="ibtn" id="bRepeat" title="أعد قراءة السؤال">🔁</div><div class="ibtn" id="bRestart" title="ابدأ الجولة من جديد">⟲</div><div class="ibtn" id="bExit" title="إنهاء والعودة للقائمة">🏠</div></div>
 
 <div id="pad">
   <div class="cbtn" id="bL"><svg viewBox="0 0 24 24"><path d="M15.5 3.5 7 12l8.5 8.5 2-2L11 12l6.5-6.5z"/></svg><span class="lbl">يسار</span></div>
@@ -290,6 +314,7 @@ table.lb tr.win td{color:var(--gold2);font-weight:700}
 
 <script type="module" src="js/salla.js"></script>
 
+<div id="songFab" title="إيقاف الأغنية">🎵</div>
 <!-- حقوق الملكية -->
 <div id="wm">© الأستاذة منجية عادل • إنستغرام ‎@ostatha.mongia • يوتيوب ‎@shtshout</div>
 <template id="creditTpl"><div class="credit">© 2026 جميع الحقوق محفوظة للمؤلِّفة <b>الأستاذة منجية عادل</b><br>فكرة اللعبة وقصتها وتصميمها وإعدادها: الأستاذة منجية عادل — يُمنع نسخها أو بيعها أو نسبتها لغيرها دون إذن منها

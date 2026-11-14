@@ -48,9 +48,11 @@ document.addEventListener('pointerdown', () => { try { if (audio.ctx.state !== '
 // ───────────── تحميل المجسّمات ─────────────
 const loader = new GLTFLoader();
 // النماذج محفوظة JSON وبداخلها البيانات بصيغة base64؛ نعيد بناءها GLB في الذاكرة (لا fetch لروابط data:)
+const LOADFAIL = [];
 async function loadGLB(url) {
   try {
-    const r = await fetch(url); if (!r.ok) return null;
+    let r = null; for (let k = 0; k < 4; k++) { try { r = await fetch(url); if (r.ok) break; } catch (e) { r = null; } await new Promise((z) => setTimeout(z, 1500 * (k + 1))); }
+    if (!r || !r.ok) { LOADFAIL.push(url); return null; }
     const j = await r.json(); const b = j.buffers && j.buffers[0];
     let bin = new Uint8Array(0);
     if (b && b.uri && b.uri.startsWith('data:')) {
@@ -312,7 +314,7 @@ async function voBuffer(file) {
 }
 const sub = $('#sub');
 let skipLine = null;
-function say(id, text, who, actorKey) {
+function say(id, text, who, actorKey) { window.__lastVO = id;
   const r0 = RUN;
   stopVO();
   if (S) S.talker = actorKey || null;
@@ -345,20 +347,23 @@ let S = null; // حالة الجولة
 let muted = false, paused = false;
 // ───────────── أغنية «عُمانُ عُمانُ يا فخري يا بلادي» (شاشة البداية وشاشة الفوز) ─────────────
 const SONG = new Audio('audio/song.mp3'); SONG.preload = 'auto'; SONG.loop = true;
-let songWant = 0;
+let songWant = 0; let songOff = (() => { try { return localStorage.getItem('salla_song_off') === '1'; } catch (e) { return false; } })();
+function songBtns() { for (const id of ['bSong', 'songFab']) { const b = document.getElementById(id); if (b) { b.textContent = songOff ? '🎵✕' : '🎵'; b.title = songOff ? 'تشغيل الأغنية' : 'إيقاف الأغنية'; } } }
+function toggleSong() { songOff = !songOff; try { localStorage.setItem('salla_song_off', songOff ? '1' : '0'); } catch (e) {} songBtns(); if (songOff) { SONG.pause(); SONG.volume = 0; } else if (songWant > 0) SONG.play().catch(() => {}); }
+setTimeout(() => { for (const id of ['bSong', 'songFab']) { const b = document.getElementById(id); if (b) b.onclick = (e) => { e.stopPropagation(); toggleSong(); }; } songBtns(); }, 0);
 function songTo(vol, from) {
   songWant = vol;
   if (from != null) { try { SONG.currentTime = from; } catch (e) { /* قبل التحميل */ SONG.addEventListener('loadedmetadata', () => { SONG.currentTime = from; }, { once: true }); } }
-  if (vol > 0 && SONG.paused && !muted) SONG.play().catch(() => {});
+  if (vol > 0 && SONG.paused && !muted && !songOff) SONG.play().catch(() => {});
 }
 setInterval(() => {
-  const tgt = muted ? 0 : songWant; const v = SONG.volume;
+  const tgt = (muted || songOff) ? 0 : songWant; const v = SONG.volume;
   SONG.volume = Math.abs(tgt - v) < 0.04 ? tgt : v + Math.sign(tgt - v) * 0.04;
   if (SONG.volume === 0 && !SONG.paused && (tgt === 0)) SONG.pause();
   if (tgt > 0 && SONG.paused) SONG.play().catch(() => {});
 }, 60);
 // المتصفح لا يسمح بالصوت قبل أول لمسة: نبدأ الأغنية عند أول لمسة على الشاشة
-addEventListener('pointerdown', () => { if (songWant > 0 && SONG.paused && !muted) SONG.play().catch(() => {}); });
+addEventListener('pointerdown', () => { if (songWant > 0 && SONG.paused && !muted && !songOff) SONG.play().catch(() => {}); });
 
 const input = { left: false, right: false, jumpQ: false, goToggle: 0, stop: false };
 const ui = { title: $('#title'), setup: $('#setup'), result: $('#result'), board: $('#board'), unlock: $('#unlock') };
@@ -538,7 +543,7 @@ async function encounter(i) {
   A.play('idle'); S.faceHero = A; S.hero.root.lookAt(0, 0, az);
   const st = STORY[S.grade];
   // لقطة من فوق كتف البطل: نرى وجه الحيوان وهو ينظر إلى البطل
-  const camAnimal = () => ({ pos: new THREE.Vector3(S.x - 0.75, 1.62, z - 1.9 - portraitPull(1.6)), look: new THREE.Vector3(0, 1.2, az), cut: true });
+  const camAnimal = () => ({ pos: new THREE.Vector3(S.x - 1.05, 1.8, z - 2.9 - portraitPull(1.6)), look: new THREE.Vector3(0, 1.15, az), cut: true });
   // لقطة من فوق كتف الحيوان: نرى وجه البطل وهو يردّ عليه
   const camHero = () => ({ pos: new THREE.Vector3(1.7, 1.75, az + 3.4 + portraitPull(1.6)), look: new THREE.Vector3(S.x, 0.95, z), cut: true });
   // لقطة جانبية تجمعهما وجهًا لوجه
@@ -556,12 +561,13 @@ async function encounter(i) {
   // الحيوان يبقى واقفًا قريبًا عند البوابات، وعينه على البطل طول الوقت
   // ينتظر حتى يصل فعلًا إلى جانب الطريق (لا يبقى واقفًا في منتصفه أمام البوابات)
   A.play('walk'); S.walkTo = { a: A, x: 3.7, z: z + 11, speed: 4.5 };
+  S.camT = { pos: new THREE.Vector3(S.x - 1.2, 2.4, z - 4.5 - portraitPull(2)), look: new THREE.Vector3(1.6, 1.0, z + 8) }; // نتابع الحيوان وهو يبتعد إلى جانب البوابات
   for (let w = 0; w < 30 && S.walkTo; w++) await sleep(100);
   S.walkTo = null; A.root.position.set(3.7, 0, z + 11); A.play('idle');
   for (let q = 0; q < 2; q++) await askQuestion();
   // الحيوان ينهزم ويهرب
   A.root.position.x = clamp(A.root.position.x, -2.5, 3.7);
-  S.camT = { pos: new THREE.Vector3(S.x - 0.8, 1.7, S.z - 2.2), look: new THREE.Vector3(A.root.position.x, 1.2, A.root.position.z) };
+  S.camT = { pos: new THREE.Vector3(S.x - 1.3, 2.2, S.z - 4.0 - portraitPull(2)), look: new THREE.Vector3((S.x + A.root.position.x) / 2, 1.1, (S.z + A.root.position.z) / 2) };
   await sayL(`s${S.grade}`, 'lose', st.lose); S.faceHero = null;
   A.play('run'); S.walkTo = { a: A, x: 0.4, z: S.z + 40, speed: 8, hide: true }; // يهرب على الطريق مبتعدًا أمام أعين الطلاب
   audio.sfx('whoosh');
@@ -663,7 +669,9 @@ async function station(i) {
   for (const o of S.gates) { glow(o, 1); await sayL(sc, id(`o${o.k}`), T.o[o.k].s); glow(o, 0); }
   // الجمهور يتناقش
   await sayL('tc', 'think', THINK_COMMON.think);
-  await countdown(10);
+  // مقطع من الأغنية أثناء عشر ثوانٍ تفكير المجموعة
+  SONG.volume = 0; songTo(0.5, 8.5);
+  try { await countdown(10); } finally { songTo(0); }
   const turn = (S.turn % S.groups) + 1; S.turn++;
   if (S.groups > 1) await sayL('c', `turn${turn}`, COMMON[`turn${turn}`]);
   await sayL('tc', 'choose', THINK_COMMON.choose);
@@ -756,7 +764,7 @@ async function passGate(o) {
     // البوابة الخاطئة تسقط
     const g = o.g; for (let t = 0; t < 1; t += 0.06) { g.rotation.x = t * 1.4; g.position.y = -t * 0.5; g.scale.setScalar(1 - t * 0.6); await sleep(16); } g.visible = false;
     S.z = S.gateZ - 7; S.x = S.tx = 0; S.hero.root.position.set(0, 0, S.z); S.hero.play('idle');
-    if (S.animal.root.visible) { S.animal.play('wave'); const ap = S.animal.root.position; const cb = S.camT; S.camT = { pos: new THREE.Vector3(S.x - 0.7, 1.6, S.z - 2.0), look: new THREE.Vector3(ap.x, 1.2, ap.z) }; await sayL(`s${S.grade}`, 'laugh', STORY[S.grade].laugh); S.camT = cb; S.animal.play('idle'); }
+    if (S.animal.root.visible) { S.animal.play('wave'); const ap = S.animal.root.position; const cb = S.camT; S.camT = { pos: new THREE.Vector3(S.x - 1.4, 2.3, S.z - 4.2 - portraitPull(2)), look: new THREE.Vector3((S.x + ap.x) / 2, 1.0, (S.z + ap.z) / 2) }; await sayL(`s${S.grade}`, 'laugh', STORY[S.grade].laugh); S.camT = cb; S.animal.play('idle'); }
     if (S.tries >= 2 || S.gates.filter((x) => x.alive).length <= 1) {
       await helperArrive(true);
       const c = S.gates.find((x) => x.correct); glow(c, 1); c.hint = true;
@@ -932,6 +940,8 @@ $('#btnStart').onclick = () => { audio.unlock(); startRun(setupSel.grade, setupS
 $('#btnBack').onclick = toTitle;
 $('#btnBoard').onclick = () => { audio.unlock(); openBoard(1); };
 $('#btnUnlock').onclick = () => { audio.unlock(); openUnlock(); };
+$('#btnGuide').onclick = () => { audio.unlock(); showScreen('guide'); };
+$('#guideBack').onclick = () => toTitle();
 let codeBuf = '';
 function openUnlock() {
   codeBuf = ''; $('#codeShow').textContent = ''; $('#codeMsg').textContent = '';
@@ -1168,7 +1178,10 @@ function frame() {
 (async function boot() {
   const bar = $('#loadbar');
   try { await document.fonts.load('700 40px Dubai'); } catch { /* */ }
-  await Promise.all([loadAll((p, id) => { bar.style.width = `${p * 100}%`; $('#loadtxt').textContent = id; }), loadVO()]);
+  const failBox = (msg) => { $('#loading').querySelector('.t').textContent = 'تعذّر تجهيز الرحلة'; $('#loadtxt').innerHTML = `<div style="font-size:clamp(16px,1.8vw,22px);line-height:1.8;max-width:640px;margin:12px auto">${msg}</div><button class="btn" onclick="location.reload()" style="margin-top:10px">🔄 أعيدوا المحاولة</button>`; };
+  if (location.protocol === 'file:') { failBox('افتحوا اللعبة من رابطها على الإنترنت:<br><b dir="ltr">mongia-spec.github.io/reading-race/salla</b><br>فتح الملف مباشرة من الجهاز لا يُحمّل الشخصيات.'); return; }
+  await Promise.all([loadAll((p) => { bar.style.width = `${p * 100}%`; $('#loadtxt').textContent = `جارٍ تحميل الشخصيات والأصوات… ${Math.round(p * 100)}%`; }), loadVO()]);
+  if (LOADFAIL.length) { failBox('لم يكتمل تحميل بعض ملفات اللعبة بسبب ضعف الاتصال بالإنترنت.<br>تأكّدوا من الاتصال ثم أعيدوا المحاولة.'); return; }
   $('#loading').style.display = 'none';
   toTitle(); frame();
   // أول لمسة تفتح الصوت
