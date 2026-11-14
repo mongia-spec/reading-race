@@ -146,6 +146,8 @@ class Actor {
           });
           clips.Idle_02 = fix;
         }
+        // جري الضبع الأصلي منكمش ومنحنٍ: نستعمل الجري البشري بعد تكييفه مع هيكله
+        if (id === 'hyena' && LIB.Running) clips.Running = retarget(cleanClip(LIB.Running, false), LIBSRC.Running, ri);
         if (id === 'grandma' && clips.Idle_02) { clips.Walking = clips.Idle_02.clone(); clips.Running = clips.Idle_02.clone(); }
         const names = new Set(); this.model.traverse((o) => names.add(o.name));
         for (const c of Object.values(clips)) c.tracks = c.tracks.filter((t) => names.has(t.name.split('.')[0]));
@@ -473,8 +475,8 @@ async function introScene() {
     const ln = st.intro[i];
     // الاثنان في الكادر دائمًا: من يتكلم تقترب منه الكاميرا قليلًا، والآخر ينظر إليه ويصغي
     const P = INTRO_CAM.pos, Lk = INTRO_CAM.look;
-    if (ln.who === 'mom') { M.play('wave'); S.camT = { pos: new THREE.Vector3(P.x + 0.18, P.y + 0.05, P.z - 0.35), look: new THREE.Vector3(Lk.x + 0.12, Lk.y + 0.05, Lk.z) }; }
-    else if (ln.who === 'hero') { H.play('wave'); S.camT = { pos: new THREE.Vector3(P.x - 0.18, P.y - 0.03, P.z - 0.35), look: new THREE.Vector3(Lk.x - 0.12, Lk.y - 0.05, Lk.z) }; }
+    if (ln.who === 'mom') { M.play('idle'); S.camT = { pos: new THREE.Vector3(P.x + 0.18, P.y + 0.05, P.z - 0.35), look: new THREE.Vector3(Lk.x + 0.12, Lk.y + 0.05, Lk.z) }; }
+    else if (ln.who === 'hero') { H.play('idle'); S.camT = { pos: new THREE.Vector3(P.x - 0.18, P.y - 0.03, P.z - 0.35), look: new THREE.Vector3(Lk.x - 0.12, Lk.y - 0.05, Lk.z) }; }
     else S.camT = { pos: P.clone(), look: Lk.clone() };
     await sayL(`s${S.grade}`, `intro${i}`, ln);
     M.play('idle'); H.play('idle');
@@ -483,7 +485,7 @@ async function introScene() {
   H.play('carry'); H.root.rotation.y = Math.PI * 0.75; await sleep(900);
   // العودة إلى عالم الرحلة
   scene.add(H.root); scene.add(M.root); if (S.basket.parent) scene.add(S.basket);
-  S.x = S.tx = 0; S.z = 3; H.root.position.set(0, 0, 3); H.root.rotation.y = 0; M.root.position.set(3.4, 0, 8.5); M.root.lookAt(0, 0, 3); M.play('wave'); S.momBye = 8.5 + 2; // الأم على جانب الطريق أمامنا تودّع، ثم تختفي بعد أن نتجاوزها
+  S.x = S.tx = 0; S.z = 3; H.root.position.set(0, 0, 3); H.root.rotation.y = 0; M.root.position.set(3.4, 0, 8.5); M.root.lookAt(0, 0, 3); M.play('idle'); S.momWaved = false; S.momBye = 8.5 + 2; // الأم على جانب الطريق أمامنا تودّع، ثم تختفي بعد أن نتجاوزها
   S.introSet = null; H.play('idle');
   S.camT = null;
   await sayL('c', 'howto', COMMON.howto);
@@ -1014,6 +1016,9 @@ function simWorldEvents() {
   // المراحل
   const si = world.stages.findIndex((s) => S.z >= s.z0 && S.z < s.z1);
   if (si >= 0 && si !== S.stageIdx) { S.stageIdx = si; stageBanner(world.stages[si].nameAr); world.setStageMood && world.setStageMood(si); }
+  // الأم تلوّح فقط حين يتحرك البطل مبتعدًا
+  if (S.momBye && !S.momWaved && S.mode === 'run' && S.z > 3.4) { S.momWaved = true; S.mother.play('wave'); }
+  if (S.momBye && S.momWaved) S.mother.root.lookAt(S.x, 0, S.z);
   if (S.momBye && S.mode === 'run' && S.z > S.momBye) { S.mother.root.visible = false; S.momBye = 0; }
   // اللقاءات
   if (S.mode === 'run' && S.encDone < S.nEnc && S.z >= S.encZ[S.encDone]) { const i = S.encDone++; encounter(i); }
