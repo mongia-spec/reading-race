@@ -135,6 +135,16 @@ class Actor {
         // ثوب الجدّة مربوط بالساقين: نُثبّت الساقين في حركات الوقوف والتلويح حتى لا يطير الثوب
         if (id === 'grandma') for (const [k, c] of Object.entries(clips)) c.tracks = c.tracks.filter((t) => !/position$/.test(t.name)).map((t) => { if (/(Neck|Head)\.quaternion$/.test(t.name)) return t; const r = ri[t.name.slice(0, -11)]; if (!r) return t; const v = r.l.toArray(); return new THREE.QuaternionKeyframeTrack(t.name, [0, c.duration], [...v, ...v]); });
         for (const [k, c] of Object.entries(a.clips)) clips[k] = cleanClip(c, isHero);
+        // مشي البطل بالسلّة: مشي البطل الأصلي المستقيم، مع ذراع يمنى ثابتة تحمل السلّة (حركة حمل الدلو كانت تُحني الجسم حتى تلامس السلّة الأرض)
+        if (isHero && clips.Walking && clips.Carry_Water_Bucket_Walk) {
+          const cw = clips.Carry_Water_Bucket_Walk, wk = clips.Walking.clone();
+          wk.tracks = wk.tracks.map((t) => {
+            if (!/Right(Shoulder|Arm|ForeArm|Hand)/.test(t.name) || !/quaternion$/.test(t.name)) return t;
+            const ct = cw.tracks.find((x) => x.name === t.name); if (!ct) return t;
+            const v = Array.from(ct.values.slice(0, 4)); return new THREE.QuaternionKeyframeTrack(t.name, [0, wk.duration], [...v, ...v]);
+          });
+          wk.name = 'Carry_Water_Bucket_Walk'; clips.Carry_Water_Bucket_Walk = wk;
+        }
         // وقفة الانتظار: نأخذ الذراعين والساقين من Idle_02 والجذع والرقبة والرأس مستقيمة من Wave (كانت Idle_02 تَطوي الجسم من الوسط)
         if (clips.Idle_02 && clips.Wave_One_Hand) {
           const w = clips.Wave_One_Hand; const fix = clips.Idle_02.clone();
