@@ -322,9 +322,9 @@ function say(id, text, who, actorKey) { window.__lastVO = id;
   const hasVoice = !!file && !muted;
   // لا كتابة على الشاشة حين يوجد صوت (الطلاب الصغار يسمعون)؛ تظهر الكتابة فقط إن لم يُسجَّل الصوت بعد
   if (!hasVoice) { sub.innerHTML = (who ? `<span class="who">${who}: </span>` : '') + text; sub.classList.add('show'); }
-  audio.duck(true);
+  audio.duck(true); songDuck = true;
   return new Promise((resolve) => {
-    let done = false; const fin = () => { if (done) return; done = true; skipLine = null; stopVO(); sub.classList.remove('show'); audio.duck(false); setTimeout(resolve, 180); };
+    let done = false; const fin = () => { if (done) return; done = true; skipLine = null; stopVO(); sub.classList.remove('show'); audio.duck(false); songDuck = false; setTimeout(resolve, 180); };
     skipLine = fin;
     if (hasVoice) {
       const ctx0 = audio.ctx; if (ctx0.state !== 'running') ctx0.resume().catch(() => {});
@@ -347,7 +347,9 @@ let S = null; // حالة الجولة
 let muted = false, paused = false;
 // ───────────── أغنية «عُمانُ عُمانُ يا فخري يا بلادي» (شاشة البداية وشاشة الفوز) ─────────────
 const SONG = new Audio('audio/song.mp3'); SONG.preload = 'auto'; SONG.loop = true;
-let songWant = 0; let songOff = (() => { try { return localStorage.getItem('salla_song_off') === '1'; } catch (e) { return false; } })();
+let songWant = 0; let songDuck = false; // تخفيض الأغنية تلقائيًا أثناء كلام الشخصيات
+const SONG_GAIN = 0.8, SONG_DUCK = 0.25;
+let songOff = (() => { try { return localStorage.getItem('salla_song_off') === '1'; } catch (e) { return false; } })();
 function songBtns() { for (const id of ['bSong', 'songFab']) { const b = document.getElementById(id); if (b) { b.textContent = songOff ? '🎵✕' : '🎵'; b.title = songOff ? 'تشغيل الأغنية' : 'إيقاف الأغنية'; } } }
 function toggleSong() { songOff = !songOff; try { localStorage.setItem('salla_song_off', songOff ? '1' : '0'); } catch (e) {} songBtns(); if (songOff) { SONG.pause(); SONG.volume = 0; } else if (songWant > 0) SONG.play().catch(() => {}); }
 setTimeout(() => { for (const id of ['bSong', 'songFab']) { const b = document.getElementById(id); if (b) b.onclick = (e) => { e.stopPropagation(); toggleSong(); }; } songBtns(); }, 0);
@@ -357,8 +359,9 @@ function songTo(vol, from) {
   if (vol > 0 && SONG.paused && !muted && !songOff) SONG.play().catch(() => {});
 }
 setInterval(() => {
-  const tgt = (muted || songOff) ? 0 : songWant; const v = SONG.volume;
-  SONG.volume = Math.abs(tgt - v) < 0.04 ? tgt : v + Math.sign(tgt - v) * 0.04;
+  const tgt = (muted || songOff) ? 0 : songWant * SONG_GAIN * (songDuck ? SONG_DUCK : 1); const v = SONG.volume;
+  const step = (songDuck && tgt < v) ? 0.1 : 0.04;
+  SONG.volume = Math.abs(tgt - v) < step ? tgt : v + Math.sign(tgt - v) * step;
   if (SONG.volume === 0 && !SONG.paused && (tgt === 0)) SONG.pause();
   if (tgt > 0 && SONG.paused) SONG.play().catch(() => {});
 }, 60);
