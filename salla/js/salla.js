@@ -306,7 +306,7 @@ const voCache = new Map();
 async function loadVO() { try { const r = await fetch('audio/vo/manifest.json'); if (r.ok) VO = await r.json(); } catch { VO = {}; } }
 // الأصوات تُشغَّل عبر Web Audio (نفس سياق الموسيقى المفتوح بلمسة البدء) لتعمل على الهواتف وآيباد
 let voSrc = null;
-function stopVO() { if (voSrc) { try { voSrc.onended = null; voSrc.stop(); } catch { /* */ } voSrc = null; } }
+function stopVO() { songDuck = false; if (voSrc) { try { voSrc.onended = null; voSrc.stop(); } catch { /* */ } voSrc = null; } }
 async function voBuffer(file) {
   if (voCache.has(file)) return voCache.get(file);
   const pr = fetch('audio/vo/' + file).then((r) => r.arrayBuffer()).then((ab) => new Promise((res, rej) => audio.ctx.decodeAudioData(ab, res, rej)));
