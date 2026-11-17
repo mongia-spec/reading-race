@@ -2,7 +2,11 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1b1206">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>برج المجد – بطولة اليوم الوطني</title>
 <link rel="icon" href="data:,">
 <style>
@@ -231,6 +235,209 @@ body.split .timer { display: none !important; }
 #cq .mk { display: flex; gap: 4px; justify-content: center; min-height: 0; }
 #cq .mk i { font-style: normal; font-size: min(14px,1.9vh); font-weight: 900; color: #fff; padding: 0 8px; border-radius: 8px; margin-top: 3px; }
 #cq .mk i.t0 { background: #c8102e; } #cq .mk i.t1 { background: #0a7d3b; }
+/* ═════════ إصلاحات: كل الأجهزة (لا تغيّر شكل الحاسوب إلا لإصلاح خطأ) ═════════ */
+html, body { height: 100dvh; }
+canvas#c { height: 100%; width: 100%; }
+.screen { padding-bottom: calc(70px + env(safe-area-inset-bottom)); }
+#loading { padding-bottom: 0; }
+.toolbar, .ctrls { display: none !important; } /* استُبدلا بالشريط الموحّد #nav */
+/* الشريط الموحّد */
+#nav { position: fixed; z-index: 65; left: 50%; transform: translateX(-50%); bottom: calc(8px + env(safe-area-inset-bottom)); display: flex; gap: 8px; flex-wrap: nowrap; direction: rtl;
+  padding: 6px 8px; border-radius: 22px; background: rgba(15,8,2,.82); border: 2px solid rgba(243,195,79,.55); box-shadow: 0 6px 24px rgba(0,0,0,.5); max-width: calc(100vw - 16px); }
+#nav button { font-family: inherit; display: flex; align-items: center; gap: 6px; min-height: 44px; min-width: 44px; padding: 6px 14px; border-radius: 16px; border: 2px solid var(--gold);
+  background: rgba(0,0,0,.55); color: #fff; font-size: 22px; cursor: pointer; white-space: nowrap; }
+#nav button b { font-size: 18px; font-weight: 800; }
+#nav button.go { background: linear-gradient(180deg,#ffe08a,var(--gold)); color: var(--ink); }
+#nav button.off { opacity: .7; border-style: dashed; }
+#nav button:focus-visible { outline: 3px solid #7dffd8; }
+#nav.game { padding: 4px 6px; gap: 6px; opacity: .85; }
+#nav.game button { padding: 4px 10px; font-size: 18px; min-height: 44px; }
+#nav.game button b { display: none; }
+#nav.game #nvPause b { display: inline; font-size: 15px; }
+body.split .hud .keys { bottom: 64px; }
+body.split .hud .tip { bottom: 100px; }
+/* اختيار الوضع */
+.modes { display: flex; gap: 12px; margin-top: 2vh; flex-wrap: wrap; justify-content: center; }
+.modeb { font-family: inherit; font-size: min(22px,2.8vh); font-weight: 800; padding: 10px 18px; border-radius: 18px; border: 3px solid rgba(255,255,255,.35); background: rgba(0,0,0,.5); color: #fff; cursor: pointer; min-height: 44px; }
+.modeb.sel { border-color: #7dffd8; background: rgba(0,132,61,.55); box-shadow: 0 0 18px rgba(125,255,216,.45); }
+#modesteps { margin-top: 1.2vh; max-width: min(900px, 92vw); text-align: center; font-size: min(19px,2.5vh); line-height: 1.6; padding: 8px 16px; border-radius: 14px; background: rgba(0,0,0,.5); }
+#modesteps .url { direction: ltr; unicode-bidi: isolate; color: #7dffd8; font-weight: 800; word-break: break-all; }
+#modesteps .code { direction: ltr; unicode-bidi: isolate; color: #40e0d0; font-size: 1.4em; font-weight: 900; letter-spacing: .2em; }
+.padurl { color: #7dffd8; word-break: break-all; unicode-bidi: isolate; }
+/* نافذة التأكيد */
+#confirmBox { position: fixed; inset: 0; z-index: 70; display: none; align-items: center; justify-content: center; background: rgba(0,0,0,.7); }
+#confirmBox.on { display: flex; }
+#confirmBox .box { width: min(640px, 92vw); padding: 24px; border-radius: 22px; background: #2a1d0c; border: 3px solid var(--gold); text-align: center; font-size: min(26px,4vh); line-height: 1.6; }
+#confirmBox .cfb { display: flex; gap: 14px; justify-content: center; margin-top: 18px; flex-wrap: wrap; }
+#confirmBox button { font-family: inherit; font-size: min(22px,3.4vh); font-weight: 800; min-height: 48px; padding: 8px 22px; border-radius: 16px; border: 2px solid var(--gold); background: #000; color: #fff; cursor: pointer; }
+#confirmBox #cfYes { background: #c8102e; border-color: #ffb4b4; }
+/* تفصيل النقاط */
+.hud .score .jc { font-size: .42em; margin-inline-start: 8px; vertical-align: middle; color: #fff; background: rgba(0,0,0,.5); border-radius: 10px; padding: 0 8px; }
+#result { justify-content: safe center; }
+#result > * { max-width: 58vw; } #result h1 { font-size: min(64px,7.5vh); } #result .brow { margin-top: 1.5vh; }
+#result .scores { flex-direction: row !important; flex-wrap: wrap; gap: 12px !important; margin-top: 1.2vh; }
+#result .sc { flex: 1 1 0; }
+#result .sc { font-size: min(21px,2.6vh); font-weight: 700; line-height: 1.5; padding: 8px 14px; border-radius: 16px; background: rgba(0,0,0,.55); border: 2px solid rgba(255,255,255,.25); min-width: 11em; }
+#result .sc.win { border-color: var(--gold); box-shadow: 0 0 18px rgba(243,195,79,.45); }
+#result .sc .sch { font-size: 1.2em; font-weight: 900; color: var(--gold); border-bottom: 3px solid var(--red); margin-bottom: 4px; }
+#result .sc.t1 .sch { border-bottom-color: var(--green); }
+#result .sc .scx { opacity: .8; font-size: .85em; }
+#result .sc .sct { font-size: 1.2em; font-weight: 900; color: #7dffd8; border-top: 1px solid rgba(255,255,255,.3); margin-top: 4px; padding-top: 2px; }
+.tt { width: 100%; font-size: min(22px,2.8vh); font-weight: 800; color: #ffe08a; padding: 8px 14px; border-radius: 14px; background: rgba(0,0,0,.55); border: 2px solid var(--gold); margin-top: 6px; }
+.tt small { display: block; font-size: .8em; color: #fff; font-weight: 600; }
+.champ .tt { display: inline-block; width: auto; margin: 4px auto 0; }
+/* علم الانطلاق */
+#goflag { position: absolute; top: 58%; width: 210px; height: 130px; opacity: 0; transform-origin: 0 50%; pointer-events: none; }
+#goflag i { position: absolute; left: 25%; right: 0; height: 33.4%; }
+#goflag i:nth-child(1) { top: 0; background: #fff; } #goflag i:nth-child(2) { top: 33.3%; background: #c8102e; } #goflag i:nth-child(3) { bottom: 0; background: #00843d; }
+#goflag s { position: absolute; left: 0; top: 0; bottom: 0; width: 25%; background: #c8102e; }
+#goflag::before { content: ''; position: absolute; left: -10px; top: -14px; bottom: -120px; width: 8px; border-radius: 4px; background: linear-gradient(90deg,#c9a24a,#fff3c0,#a07a28); }
+#goflag.wave { animation: flagwave 1.6s ease-out; }
+@keyframes flagwave { 0% { opacity: 0; transform: scale(.4) rotate(-20deg); } 12% { opacity: 1; transform: scale(1.05) rotate(8deg) skewY(4deg); } 30% { transform: scale(1) rotate(-6deg) skewY(-5deg); } 50% { transform: rotate(6deg) skewY(5deg); } 70% { opacity: 1; transform: rotate(-4deg) skewY(-3deg); } 100% { opacity: 0; transform: rotate(0) translateY(-30px); } }
+/* أزرار اللمس لكل فريق (جهاز واحد على لوح/هاتف) */
+.tpad { position: fixed; bottom: calc(66px + env(safe-area-inset-bottom)); width: 50%; z-index: 7; display: none; justify-content: space-between; align-items: flex-end; padding: 0 14px; direction: ltr; pointer-events: none; }
+.tpad.r { right: 0; } .tpad.l { left: 0; }
+body.touch.split .tpad { display: flex; }
+body.touch.split .hud .keys { display: none; }
+.tpad .tg { display: flex; gap: 10px; align-items: flex-end; }
+.tpad button { pointer-events: auto; touch-action: none; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; font-family: inherit;
+  width: 64px; height: 64px; border-radius: 18px; border: 3px solid rgba(255,255,255,.75); background: rgba(0,0,0,.45); color: #fff; font-size: 28px; font-weight: 900;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1; }
+.tpad button small { font-size: 13px; margin-top: 2px; }
+.tpad button.run { width: 92px; height: 92px; border-radius: 50%; background: rgba(0,132,61,.6); font-size: 34px; }
+.tpad.l button.run { background: rgba(0,132,61,.6); } .tpad.r button.run { background: rgba(200,16,46,.6); }
+.tpad button.down { transform: scale(.94); filter: brightness(1.4); }
+/* «أدِر هاتفك» */
+#rotate { position: fixed; inset: 0; z-index: 80; display: none; flex-direction: column; align-items: center; justify-content: center; gap: 16px; text-align: center; padding: 24px;
+  background: radial-gradient(circle at 50% 40%, #3a220b, #0d0703); }
+#rotate div { font-size: 72px; animation: pulse 1.4s infinite; } #rotate p { font-size: 24px; font-weight: 800; color: var(--gold); line-height: 1.6; }
+#rotate button { font-family: inherit; font-size: 17px; min-height: 44px; padding: 8px 18px; border-radius: 14px; border: 2px solid rgba(255,255,255,.5); background: transparent; color: #fff; }
+@media (orientation: portrait) and (max-width: 700px) { body:not(.rotok) #rotate { display: flex; } }
+#voicePanel .vhelp { display: block; line-height: 1.7; font-size: 18px; }
+#voicePanel .play { background: #0a4d7d; font-weight: 800; }
+#voicePanel button { min-height: 44px; }
+/* ── شاشات صغيرة بالعرض (هواتف) ── */
+@media (max-height: 520px), (max-width: 760px) {
+  #nav { gap: 4px; padding: 4px; border-radius: 16px; }
+  #nav button { padding: 4px 8px; font-size: 20px; min-width: 44px; justify-content: center; }
+  #nav button b { display: none; }
+  #nav #nvStart b, #nav #nvResume b { display: inline; font-size: 15px; }
+  .screen { padding-top: 6px; padding-bottom: calc(60px + env(safe-area-inset-bottom)); justify-content: flex-start; }
+  .screen > :first-child { margin-top: auto; } .screen > :last-child { margin-bottom: auto; }
+  #title h2 { font-size: 20px; } #title .floor { font-size: 17px; margin-top: 8px; padding: 4px 16px; }
+  .btn { font-size: 20px; padding: 10px 28px; margin-top: 10px; min-height: 44px; }
+  .btn2, .big2 { font-size: 16px !important; padding: 8px 14px !important; min-height: 44px; margin-top: 8px; }
+  .hint { font-size: 13px; margin-top: 6px; }
+  .modes { margin-top: 8px; gap: 8px; } .modeb { font-size: 15px; padding: 6px 12px; }
+  #modesteps { font-size: 13px; padding: 4px 10px; margin-top: 6px; }
+  #title { flex-flow: row wrap; align-content: center; justify-content: center; column-gap: 8px; }
+  #title > * { flex-basis: 100%; display: flex; justify-content: center; text-align: center; }
+  #title > h1, #title > h2 { display: block; } #title > .floor { flex-basis: auto; }
+  #title > button { flex-basis: auto; order: 5; margin-top: 8px !important; }
+  #title > .modes { order: 8; } #title > #modesteps { order: 9; display: block; flex-basis: auto; } #title > .hint { order: 10; }
+  #title > .hint:not(.perfwarn) { display: none; }
+  #tower .brow { order: -1; margin: 0 0 6px; } #tower .hint { display: none; } #tower h2 { font-size: 18px; margin-bottom: 4px; }
+  .fl .tryb, .fl .startb { min-height: 44px !important; }
+  .team .keys, .team .netst { display: none; } .team input { min-height: 44px; } .team .tg { min-height: 44px; }
+  #setup h2 { font-size: 18px; margin-bottom: 4px; } .hero img { max-height: 21vh; }
+  /* البرج */
+  .floors { gap: 4px; } .fl { padding: 3px 8px; gap: 8px; border-radius: 12px; flex-wrap: nowrap; }
+  .fl .fn { width: 30px; height: 30px; font-size: 16px; } .fl .ft { font-size: 14px; } .fl .fm { font-size: 12px; } .fl .fs { font-size: 18px; }
+  .fl .tryb, .fl .startb { font-size: 13px !important; padding: 4px 8px !important; min-height: 40px; margin: 0; }
+  .brow { gap: 8px; margin-top: 8px; flex-wrap: wrap; justify-content: center; }
+  /* الاختيار */
+  .teams { gap: 10px; } .team { width: 46vw; padding: 8px; border-radius: 14px; }
+  .team input { font-size: 18px; padding: 4px; margin-bottom: 6px; } .team .tg { font-size: 14px; margin: 0 0 6px; min-height: 36px; }
+  .team .keys { font-size: 12px; margin-bottom: 4px; } .heroes { gap: 6px; } .hero span { font-size: 13px; padding: 2px; }
+  .hero img { max-height: 24vh; }
+  .netbox { font-size: 13px; padding: 4px 10px; margin-top: 6px; } .netcode { font-size: 28px; }
+  /* كيف نلعب */
+  .steps { grid-template-columns: repeat(3, 1fr); width: 96vw; gap: 6px; } .step { padding: 4px 8px; border-radius: 12px; }
+  .step .ic { font-size: 22px; } .step h3 { font-size: 15px; margin: 0; } .step p { font-size: 12px; line-height: 1.4; }
+  /* اللعب */
+  .hud.r, .hud.l { padding: 6px 8px !important; }
+  .hud .name { font-size: 16px; } .hud .runner { font-size: 12px; } .hud .score { font-size: 26px; } .hud .rt { font-size: 13px; padding: 0 6px; }
+  .hud .row > div:first-child { padding: 2px 8px; border-radius: 10px; }
+  #cq { top: 52px; width: min(66vw, 640px); } #cq .cqq { font-size: 16px; line-height: 1.35; } #cq .cqo b { font-size: 14px; } #cq .cqo small { font-size: 10px; } #cq .cqt { font-size: 12px; }
+  #cq .cqo { padding: 2px 4px; border-width: 2px; border-radius: 10px; } #cq .cqa { gap: 6px; margin-top: 3px; } #cq .mk i { font-size: 10px; padding: 0 4px; }
+  .hud .tip { font-size: 15px; bottom: 150px !important; } .hud .fx { font-size: 28px; }
+  .big { font-size: 96px; } .caption { font-size: 22px; bottom: 18vh; } .caption small { font-size: 15px; }
+  #goflag { width: 120px; height: 75px; } #goflag::before { bottom: -60px; }
+  #handover h2 { font-size: 32px; } #handover p { font-size: 18px; } #handover .n { font-size: 70px; }
+  #pausescr h2 { font-size: 36px; } .prow { margin-top: 10px; gap: 8px; flex-wrap: wrap; justify-content: center; }
+  .tpad { padding: 0 8px; bottom: calc(56px + env(safe-area-inset-bottom)); } .tpad .tg { gap: 6px; }
+  .tpad button { width: 52px; height: 52px; font-size: 22px; border-radius: 14px; } .tpad button.run { width: 72px; height: 72px; font-size: 26px; }
+  /* النتيجة */
+  #result { padding: 0 3vw; } #result > * { max-width: 70vw; } #result h1 { font-size: 26px; } #result h2 { font-size: 14px; }
+  #result .sc { font-size: 12px; padding: 4px 8px; min-width: 11em; line-height: 1.4; } .tt { font-size: 12px; padding: 4px 8px; }
+  #result .scores { gap: 6px !important; margin-top: 6px; }
+  #voicePanel .box { padding: 10px; } #voicePanel h3 { font-size: 20px; } #voicePanel .vrow { font-size: 14px; padding: 6px; flex-wrap: wrap; }
+  #confirmBox .box { font-size: 16px; padding: 14px; }
+}
+/* هاتف بالطول بعد «متابعة على أي حال»: القوائم عمودية */
+@media (orientation: portrait) and (max-width: 700px) {
+  .teams { flex-direction: column; } .team { width: 94vw; } .steps { grid-template-columns: repeat(2, 1fr); }
+  #cq { width: 96vw; top: 64px; } .hud { width: 50%; } .hud .runner { display: none; }
+  #result > * { max-width: 94vw; } #result { background: rgba(10,5,0,.7); align-items: center; }
+  #nav { flex-wrap: wrap; justify-content: center; }
+}
+/* سبورة 4K بلا تكبير من ويندوز (عرض CSS ≥ 3000px): تكبير الخطوط فقط، والمشهد كما هو */
+@media (min-width: 3000px) {
+  .hud.r, .hud.l { padding: 28px 36px !important; }
+  .hud .name { font-size: 60px; } .hud .runner { font-size: 40px; } .hud .score { font-size: 100px; } .hud .rt { font-size: 52px !important; }
+  .hud .tip { font-size: 3.4vh !important; bottom: 230px !important; } .hud .keys { font-size: 40px; bottom: 130px !important; } .hud .fx { font-size: 110px; }
+  #cq { top: 200px !important; width: 66vw !important; } #cq .cqq { font-size: 5.2vh !important; } #cq .cqo b { font-size: 4.4vh !important; }
+  #cq .cqo small, #cq .mk i, #cq .cqt { font-size: 2.4vh !important; } #cq.two { width: 96vw !important; } #cq.two .cqq { font-size: 4.2vh !important; }
+  #nav { padding: 12px 16px; gap: 16px; border-radius: 40px; } #nav button { font-size: 44px; min-height: 88px; padding: 10px 28px; border-radius: 28px; } #nav button b { font-size: 34px; }
+  #nav.game button { font-size: 38px; min-height: 80px; } #nav.game #nvPause b { font-size: 30px; }
+  .big { font-size: 360px; } .caption { font-size: 88px; } .caption small { font-size: 56px; } #goflag { width: 420px; height: 260px; }
+  #title h2 { font-size: 68px; } #title .floor { font-size: 56px; } .btn { font-size: 64px !important; padding: 28px 90px; } .btn2, .big2 { font-size: 46px !important; }
+  .hint { font-size: 38px; } .modeb { font-size: 44px; padding: 16px 32px; } #modesteps { font-size: 36px; max-width: 70vw; }
+  #tower h2, #setup h2, #howto h2 { font-size: 90px; } .champ { font-size: 64px; } .floors { width: 70vw; }
+  .fl .ft { font-size: 50px; } .fl .fm { font-size: 38px; } .fl .fn { width: 100px; height: 100px; font-size: 52px; } .fl .tryb, .fl .startb { font-size: 34px !important; padding: 8px 22px !important; }
+  .team input { font-size: 60px; } .team .tg { font-size: 40px; } .team .keys { font-size: 36px; } .hero span { font-size: 40px; } .netbox { font-size: 38px; } .netcode { font-size: 120px; }
+  .step h3 { font-size: 52px; } .step p { font-size: 40px; } .step .ic { font-size: 100px; }
+  #result h1 { font-size: 130px !important; } #result h2 { font-size: 64px; } #result .sc { font-size: 42px; } .tt { font-size: 42px; }
+  #pausescr h2 { font-size: 140px; } #handover h2 { font-size: 130px; } #handover p { font-size: 68px; } #handover .n { font-size: 280px; }
+  #confirmBox .box { width: 1300px; font-size: 52px; } #confirmBox button { font-size: 44px; } #voicePanel .box { width: 1400px; font-size: 36px; }
+}
+
+/* لوح بالطول ولابتوب صغير: شريط الأزرار أيقونات (مع تلميح) حتى لا يُقصّ */
+@media (max-width: 920px) { #nav button b { display: none; } #nav #nvStart b, #nav #nvResume b, #nav #nvPause b { display: inline; font-size: 15px; } #nav button { padding: 6px 10px; } }
+@media (min-width: 921px) and (max-width: 1180px) { #nav button { padding: 6px 9px; } #nav button b { font-size: 14px; } }
+@media (orientation: portrait) and (min-width: 701px) { #cq, #cq.two { top: 150px !important; } }
+/* ── ملاحظات خبير التصميم ── */
+.fl.cur .startb { display: none; }
+.fl .startb { background: transparent !important; border: 2px solid rgba(255,255,255,.45) !important; color: #fff; opacity: .85; font-weight: 700; }
+.fl .startb:hover { opacity: 1; border-color: #fff !important; }
+.fl.locked .tryb { border-color: #7dffd8; color: #7dffd8; font-weight: 900; }
+#cq { width: min(66vw, 1100px); top: 112px; } /* أسفل صندوقي الاسمين بعد تكبير المؤقت */
+#cq .cqq { font-size: min(44px, 5.2vh); }
+#cq .cqo b { font-size: min(36px, 4.4vh); }
+#cq .cqo small, #cq .mk i { font-size: min(20px, 2.4vh); }
+#cq .cqo[data-k="1"] { background: rgba(0,0,0,.25); }
+.hud .rt { font-size: 32px; }
+#cq.two { width: 96vw; display: flex; gap: 6vw; align-items: flex-start; }
+#cq.two .cqb { flex: 1; margin-top: 0 !important; }
+#cq.two .cqq { font-size: min(34px, 4.2vh); }
+#cq.two .cqo b { font-size: min(28px, 3.5vh); }
+#cq.two .cqt { font-size: min(24px, 3vh); display: inline-block; padding: 0 12px; border-radius: 10px; color: #fff; text-shadow: none; }
+#cq.two .cqt.t0 { background: #c8102e; } #cq.two .cqt.t1 { background: #0a7d3b; }
+#result h1 { text-wrap: balance; max-width: 46vw; font-size: min(64px, 7vh); }
+#pausescr #perf { display: none; }
+.hud .tip { font-size: min(28px, 3.4vh); padding: 0 12px; }
+@media (max-height: 520px), (max-width: 760px) {
+  #cq { width: min(66vw, 640px); top: 56px; } #cq .cqq { font-size: 16px; } #cq .cqo b { font-size: 14px; } #cq .cqo small, #cq .mk i { font-size: 11px; }
+  .hud .rt { font-size: 13px; }
+  #cq.two { width: 98vw; gap: 3vw; top: 52px; } #cq.two .cqq { font-size: 13px; } #cq.two .cqo b { font-size: 12px; } #cq.two .cqt { font-size: 11px; }
+  #result h1 { max-width: 70vw; font-size: 26px; } .hud .tip { font-size: 15px; }
+}
+@media (orientation: portrait) and (max-width: 700px) {
+  #cq, #cq.two { top: 96px; width: 96vw; }
+  .tpad { flex-direction: column; align-items: center; gap: 8px; bottom: calc(118px + env(safe-area-inset-bottom)); }
+  .tpad button { width: 50px; height: 50px; font-size: 20px; } .tpad button.run { width: 66px; height: 66px; font-size: 24px; }
+  .hud .tip { bottom: 300px !important; }
+}
 </style>
 </head>
 <body>
@@ -244,7 +451,17 @@ body.split .timer { display: none !important; }
 <div id="cq"></div>
 <div class="timer"><small>وقت العدّاء</small><span id="timer">40</span></div>
 <div class="ctrls"><button id="pausebtn" title="إيقاف (P)">⏸ إيقاف</button><button class="mutebtn" title="(M)">🔊 الصوت يعمل</button><button class="fsb">⛶ ملء الشاشة</button></div>
-<div class="center"><div class="big" id="big"></div></div>
+<div class="center"><div class="big" id="big"></div><div id="goflag" aria-hidden="true"><i></i><i></i><i></i><s></s></div></div>
+<div class="tpad r" data-t="0"><div class="tg"><button data-k="L" aria-label="يسار">◀</button><button data-k="R" aria-label="يمين">▶</button></div><div class="tg"><button data-k="J">⤒<small>قفز</small></button><button data-k="RUN" class="run">🏃<small>اركض</small></button></div></div>
+<div class="tpad l" data-t="1"><div class="tg"><button data-k="L" aria-label="يسار">◀</button><button data-k="R" aria-label="يمين">▶</button></div><div class="tg"><button data-k="J">⤒<small>قفز</small></button><button data-k="RUN" class="run">🏃<small>اركض</small></button></div></div>
+<nav id="nav" style="display:none">
+  <button id="nvBack">↩<b>رجوع</b></button><button id="nvHome">🏠<b>الرئيسية</b></button><button id="nvFloors">🏢<b>اختر الطابق</b></button>
+  <button id="nvStart" class="go">▶<b>ابدأ</b></button><button id="nvPause">⏸<b>إيقاف مؤقت</b></button><button id="nvResume" class="go">⏵<b>إكمال</b></button>
+  <button id="nvRestart">↻<b>أعِد المباراة</b></button><button id="nvTourNew">⏮<b>ابدأ البطولة من جديد</b></button>
+  <button id="nvFS">⛶<b>ملء الشاشة</b></button><button id="nvSound">🔊<b>الأصوات</b></button><button id="nvSong">🎵<b>الأغنية</b></button>
+</nav>
+<div id="confirmBox"><div class="box"><div id="cfMsg"></div><div class="cfb"><button id="cfYes"></button><button id="cfNo">↩ لا، رجوع</button></div></div></div>
+<div id="rotate"><div>📱↻</div><p>أدِر الهاتف بالعرض لتظهر اللعبة كاملة</p><button id="rotOk">متابعة بالطول على أي حال</button></div>
 <div class="caption" id="caption"></div>
 
 <div class="toolbar"><button id="fsbtn" title="F">⛶ ملء الشاشة</button><button id="homebtn">⌂ الرئيسية</button></div>
@@ -255,17 +472,19 @@ body.split .timer { display: none !important; }
   <h2>بطولة اليوم الوطني المجيد</h2>
   <div class="floor">الطابق الأول • السوق القديم</div>
   <button class="btn" id="toTower">🏰 ابدأ البطولة</button>
+  <div class="modes"><button class="modeb" data-m="one">🖥️ جهاز واحد (شاشة مقسومة)</button><button class="modeb" data-m="net">📱 جهازان أو أكثر</button></div>
+  <div id="modesteps"></div>
   <button class="btn2 big2" id="titleHow">❓ كيف نلعب؟</button>
   <button class="btn2 big2" id="voiceBtn">🎙️ صوت قارئ الأسئلة</button>
   <div class="hint">اضغط Enter للبدء</div>
-  <div class="hint perfwarn" id="perfwarn2" style="display:none">⚠️ هذا المتصفح يرسم اللعبة ببطء. افتحي اللعبة في متصفح Google Chrome لتكون أسرع.</div>
+  <div class="hint perfwarn" id="perfwarn2" style="display:none">⚠️ هذا الجهاز يرسم اللعبة ببطء؛ فعّلي «استخدام تسريع الأجهزة» من إعدادات المتصفح.</div>
 </div>
 
 <div class="screen" id="tower">
   <h2>🏰 برج المجد • طوابق البطولة</h2>
   <div class="champ" id="champ"></div>
   <div class="floors" id="floors"></div>
-  <div class="brow"><button class="btn2 big2" id="towerBack">→ رجوع</button><button class="btn" id="tourGo">ابدأ</button><button class="btn2 big2" id="tourReset">↺ ابدأ البطولة من الطابق الأول</button></div>
+  <div class="brow"><button class="btn2 big2" id="towerBack">→ رجوع</button><button class="btn" id="tourGo">ابدأ</button><button class="btn2 big2" id="tourReset">🗑️ مسح النتائج والبدء من جديد</button></div>
   <div class="hint">زر «تجربة» يفتح أي طابق للتدريب دون أن يُحسب في البطولة • النتائج تُحفظ تلقائيًا في هذا الحاسوب</div>
 </div>
 
@@ -286,7 +505,7 @@ body.split .timer { display: none !important; }
     </div>
   </div>
   <div class="netbox">
-    <div>كل صف يتحكّم من حاسوبه: افتحوا ملف <b>«جهاز الصف»</b> على حاسوب كل صف واكتبوا هذا الرمز</div>
+    <div>كل صف يتحكّم من جهازه (هاتف/لوح/حاسوب): افتحوا الرابط <b class="padurl" dir="ltr">pad.html</b> واكتبوا هذا الرمز</div>
     <div class="netcode">----</div>
     <div class="netsrv">⏳ جارٍ تجهيز الاتصال…</div>
   </div>
@@ -296,12 +515,12 @@ body.split .timer { display: none !important; }
 <div class="screen" id="howto">
   <h2>كيف نلعب؟</h2>
   <div class="steps">
-    <div class="step"><div class="ic">🏃</div><h3>اضغط لتركض</h3><p>استمر بالضغط ليركض بطلك، وإذا تركت الزر يتوقف<br><span class="n0">الفريق الأيمن</span>: <span class="kb">↑</span>  <span class="n1">الفريق الأيسر</span>: <span class="kb">W</span></p></div>
+    <div class="step"><div class="ic">🏃</div><h3>اضغط لتركض</h3><p>استمر بالضغط ليركض بطلك، وإذا تركت الزر يتوقف<br><span class="n0">الفريق الأيمن</span>: <span class="kb">↑</span><br><span class="n1">الفريق الأيسر</span>: <span class="kb">W</span></p></div>
     <div class="step"><div class="ic">↔️</div><h3>غيّر المسار</h3><p><span class="n0">الفريق الأيمن</span>: <span class="kb">←</span><span class="kb">→</span><br><span class="n1">الفريق الأيسر</span>: <span class="kb">A</span><span class="kb">D</span></p></div>
-    <div class="step"><div class="ic">⬆️</div><h3>اقفز فوق العقبات</h3><p><span class="n0">الفريق الأيمن</span>: <span class="kb">Enter</span>  <span class="n1">الفريق الأيسر</span>: <span class="kb">مسافة</span><br>إذا اصطدمت بعربة تتعثّر وتبطئ</p></div>
+    <div class="step"><div class="ic">⬆️</div><h3>اقفز فوق العقبات</h3><p><span class="n0">الفريق الأيمن</span>: <span class="kb">Enter</span><br><span class="n1">الفريق الأيسر</span>: <span class="kb">مسافة</span><br>إذا اصطدمت بعربة تتعثّر وتبطئ</p></div>
     <div class="step"><div class="ic">🏺</div><h3>اجمع الكنوز</h3><p>مُرّ فوق الجرة: <b>+10</b><br>الخنجر الذهبي: <b>+25</b> وسرعة!</p></div>
     <div class="step"><div class="ic">❓</div><h3>أجب بقدميك</h3><p>كل فريق يُسأل من أسئلة صفّه. يبطؤ البطل لتفكّر، ثم مُرّ من <b>بوابة الإجابة الصحيحة</b>: <b>+50</b></p></div>
-    <div class="step"><div class="ic">🔁</div><h3>سباق تتابع</h3><p>4 طلاب من كل صف، لكل طالب 40 ثانية، ثم يسلّم لوحة المفاتيح لزميله. الأكثر نقاطًا يفوز</p></div>
+    <div class="step"><div class="ic">🔁</div><h3>سباق تتابع</h3><p>4 طلاب من كل صف، لكل طالب <span id="rsecs">60</span> ثانية (دقيقة)، ثم يسلّم لوحة المفاتيح لزميله. الأكثر نقاطًا يفوز</p></div>
   </div>
   <div class="brow"><button class="btn2 big2" id="howBack">→ رجوع</button><button class="btn" id="play">فهمنا… ابدأ السباق!</button></div>
 </div>
@@ -311,7 +530,7 @@ body.split .timer { display: none !important; }
   <div class="prow"><button class="btn2" id="restart">↻ إعادة المباراة</button><button class="btn2" id="menu">⌂ القائمة الرئيسية</button><button class="btn2 mutebtn">🔊 الصوت يعمل</button><button class="btn2 fsb">⛶ ملء الشاشة</button></div>
   <div class="hint">اضغط P أو Esc للإيقاف والمتابعة • M لإغلاق الصوت</div>
   <div class="hint" id="perf"></div>
-  <div class="hint perfwarn" id="perfwarn" style="display:none">⚠️ هذا المتصفح يرسم اللعبة ببطء. افتحي اللعبة في متصفح Google Chrome لتكون أسرع.</div>
+  <div class="hint perfwarn" id="perfwarn" style="display:none">⚠️ هذا الجهاز يرسم اللعبة ببطء؛ فعّلي «استخدام تسريع الأجهزة» من إعدادات المتصفح.</div>
 </div>
 <div class="screen" id="handover"><h2>تسليم الدور!</h2><p id="hotext"></p><div class="n" id="hon">3</div></div>
 <div class="screen" id="result"><h1 id="rwin"></h1><h2 id="rsub"></h2><div class="scores" id="rscores"></div><div class="brow"><button class="btn2 big2" id="resHome">⌂ الرئيسية</button><button class="btn2 big2" id="again">↻ إعادة المباراة</button><button class="btn2 big2" id="resTower">🏰 إلى البرج</button><button class="btn" id="nextPractice" style="display:none">التالي</button></div></div>

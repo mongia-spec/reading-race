@@ -14,7 +14,7 @@
   h1 { font-size:min(52px,7vh); color:var(--gold); text-shadow:0 3px 14px #000; }
   h2 { font-size:min(34px,4.6vh); color:var(--teal2); }
   p.l { font-size:min(24px,3.2vh); opacity:.92; max-width:760px; line-height:1.6; }
-  #code { font-size:min(80px,11vh); width:min(420px,86vw); text-align:center; letter-spacing:.3em; direction:ltr; border-radius:22px; border:4px solid var(--teal2); padding:6px 10px; font-weight:900; background:#fff; color:var(--dark); font-family:inherit; }
+  #code { font-size:min(80px,11vh,15vw); width:min(420px,86vw); text-align:center; letter-spacing:.3em; direction:ltr; border-radius:22px; border:4px solid var(--teal2); padding:6px 10px; font-weight:900; background:#fff; color:var(--dark); font-family:inherit; }
   button { font-family:inherit; cursor:pointer; border:0; }
   .btn { font-size:min(34px,4.6vh); font-weight:800; padding:2vh 48px; border-radius:22px; background:var(--teal); color:#fff; box-shadow:0 6px 0 #0d5e5b; }
   .btn:active { transform:translateY(4px); box-shadow:0 2px 0 #0d5e5b; }
@@ -84,7 +84,7 @@
   <div class="conn" id="conn">● متصل</div>
   <div class="top">
     <div class="badge" id="pname">—</div>
-    <div class="badge">⏱ <span id="ptime">40</span></div>
+    <div class="badge">⏱ <span id="ptime">60</span></div>
     <div class="badge">النقاط: <span id="pscore">0</span></div>
   </div>
   <div class="badge" id="prunner" style="font-size:min(22px,3vh)"></div>
@@ -109,6 +109,8 @@ const $ = (s) => document.querySelector(s);
 let peer = null, conn = null, team = null, code = '', running = false, wantClose = false, retryT = null;
 function show(id) { document.querySelectorAll('.scr').forEach((e) => e.classList.toggle('on', e.id === id)); }
 try { $('#code').value = localStorage.getItem('borjCtlCode') || ''; } catch (e) {}
+// الرابط pad.html?c=1234 يملأ الرمز تلقائيًا (من شاشة العرض)
+try { const c = new URLSearchParams(location.search).get('c'); if (/^\d{4}$/.test(c || '')) { $('#code').value = c; setTimeout(() => { if (typeof connect === 'function') connect(); }, 300); } } catch (e) {}
 
 function connect() {
   code = $('#code').value.replace(/\D/g, '');
