@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>برج المجد — جهاز الصف</title>
+<style>
+  :root { --teal:#1a9e9a; --teal2:#40e0d0; --beige:#f5ebdc; --dark:#1f5c45; --gold:#ffd34a; }
+  * { box-sizing:border-box; margin:0; padding:0; -webkit-user-select:none; user-select:none; -webkit-tap-highlight-color:transparent; }
+  html,body { height:100%; }
+  body { font-family:"Segoe UI",Tahoma,Arial,sans-serif; background:linear-gradient(160deg,#0d3b3a,#0a2622 60%,#14110a); color:#fff; overflow:hidden; touch-action:none; }
+  .scr { display:none; position:fixed; inset:0; flex-direction:column; align-items:center; justify-content:center; gap:2.2vh; padding:16px; text-align:center; }
+  .scr.on { display:flex; }
+  h1 { font-size:min(52px,7vh); color:var(--gold); text-shadow:0 3px 14px #000; }
+  h2 { font-size:min(34px,4.6vh); color:var(--teal2); }
+  p.l { font-size:min(24px,3.2vh); opacity:.92; max-width:760px; line-height:1.6; }
+  #code { font-size:min(80px,11vh); width:min(420px,86vw); text-align:center; letter-spacing:.3em; direction:ltr; border-radius:22px; border:4px solid var(--teal2); padding:6px 10px; font-weight:900; background:#fff; color:var(--dark); font-family:inherit; }
+  button { font-family:inherit; cursor:pointer; border:0; }
+  .btn { font-size:min(34px,4.6vh); font-weight:800; padding:2vh 48px; border-radius:22px; background:var(--teal); color:#fff; box-shadow:0 6px 0 #0d5e5b; }
+  .btn:active { transform:translateY(4px); box-shadow:0 2px 0 #0d5e5b; }
+  .msg { font-size:min(24px,3.2vh); min-height:1.6em; color:#ffd0a0; }
+  .teams { display:flex; gap:3vw; flex-wrap:wrap; justify-content:center; }
+  .tbtn { width:min(400px,42vw); padding:4vh 16px; border-radius:28px; font-size:min(40px,5.4vh); font-weight:900; color:var(--dark); background:var(--beige); border:5px solid var(--teal2); }
+  .tbtn small { display:block; font-size:min(20px,2.6vh); font-weight:600; color:var(--teal); margin-top:8px; }
+  /* شاشة اللعب */
+  #play { justify-content:flex-start; padding-top:2vh; gap:1.6vh; }
+  .top { display:flex; width:100%; max-width:1100px; justify-content:space-between; align-items:center; gap:12px; }
+  .badge { background:rgba(255,255,255,.1); border-radius:18px; padding:1vh 20px; font-size:min(26px,3.4vh); font-weight:800; }
+  #pname { color:var(--gold); font-size:min(34px,4.6vh); }
+  #pscore { color:var(--teal2); font-size:min(40px,5.4vh); }
+  #pstate { font-size:min(40px,5.6vh); font-weight:900; min-height:1.3em; text-shadow:0 3px 12px #000; }
+  #q { width:100%; max-width:1100px; background:rgba(255,255,255,.95); color:var(--dark); border-radius:24px; padding:1.6vh 18px; display:none; }
+  #q.on { display:block; }
+  #qq { font-size:min(34px,4.6vh); font-weight:900; }
+  .ans { display:flex; direction:ltr; gap:10px; margin-top:1.2vh; }
+  .ans div { flex:1; border-radius:16px; border:4px solid #cfe9e6; background:var(--beige); padding:1.2vh 6px; font-size:min(28px,3.8vh); font-weight:800; direction:rtl; }
+  .ans div small { display:block; font-size:min(18px,2.4vh); color:var(--teal); }
+  .ans div.cur { border-color:var(--teal); background:#d8f6f2; box-shadow:0 0 0 4px var(--gold); }
+  .pad { margin-top:auto; width:100%; max-width:1200px; display:flex; direction:ltr; justify-content:space-between; align-items:flex-end; gap:16px; padding-bottom:2vh; }
+  .grp { display:flex; gap:16px; align-items:flex-end; }
+  .pb { border-radius:28px; font-weight:900; color:#fff; display:flex; flex-direction:column; align-items:center; justify-content:center; touch-action:none; box-shadow:0 8px 0 rgba(0,0,0,.35); transition:transform .05s; }
+  .pb small { font-size:min(18px,2.4vh); font-weight:700; opacity:.9; margin-top:4px; }
+  .pb.down { transform:translateY(6px) scale(.97); box-shadow:0 2px 0 rgba(0,0,0,.35); filter:brightness(1.25); }
+  .lr { width:min(170px,17vw); height:min(170px,24vh); font-size:min(70px,10vh); background:#2c6f8f; }
+  #bRun { width:min(260px,26vw); height:min(260px,34vh); font-size:min(54px,7.5vh); background:var(--teal); border-radius:50%; }
+  #bJump { width:min(170px,17vw); height:min(170px,24vh); font-size:min(40px,5.6vh); background:#c9772c; }
+  .hint { font-size:min(18px,2.4vh); opacity:.75; direction:rtl; max-width:260px; padding-bottom:30px; }
+  .conn { position:fixed; bottom:6px; left:50%; transform:translateX(-50%); font-size:16px; padding:4px 12px; border-radius:14px; background:rgba(60,200,120,.25); color:#9dffc4; }
+  .conn.off { background:rgba(255,80,80,.25); color:#ffb4b4; }
+  .win { color:var(--gold); }
+
+@media (orientation: portrait) {
+  .pad { flex-wrap: wrap; justify-content: center; gap: 12px; }
+  .pad .hint { display: none; }
+  .lr, #bJump { width: 26vw; height: 15vh; }
+  #bRun { width: 44vw; height: 44vw; }
+  .pad > .grp:last-child { order: -1; width: 100%; justify-content: center; }
+  #pstate { font-size: 6.4vw; }
+  #play { gap: 1vh; }
+}
+</style>
+</head>
+<body>
+
+<div class="scr on" id="s1">
+  <h1>🏰 برج المجد</h1>
+  <h2>جهاز تحكّم الصف</h2>
+  <p class="l">اكتبوا الرمز الظاهر على شاشة العرض الكبيرة</p>
+  <input id="code" inputmode="numeric" maxlength="4" placeholder="0000" autocomplete="off">
+  <button class="btn" id="connect">اتصال</button>
+  <div class="msg" id="m1"></div>
+</div>
+
+<div class="scr" id="s2">
+  <h1>اختاروا صفّكم</h1>
+  <div class="teams">
+    <button class="tbtn" data-t="0"><span class="tn">الفريق الأول</span><small>يمين الشاشة</small></button>
+    <button class="tbtn" data-t="1"><span class="tn">الفريق الثاني</span><small>يسار الشاشة</small></button>
+  </div>
+  <div class="msg" id="m2"></div>
+</div>
+
+<div class="scr" id="play">
+  <div class="conn" id="conn">● متصل</div>
+  <div class="top">
+    <div class="badge" id="pname">—</div>
+    <div class="badge">⏱ <span id="ptime">40</span></div>
+    <div class="badge">النقاط: <span id="pscore">0</span></div>
+  </div>
+  <div class="badge" id="prunner" style="font-size:min(22px,3vh)"></div>
+  <div id="pstate">انتظروا بدء السباق…</div>
+  <div id="q"><div id="qq"></div><div class="ans" id="ans"></div></div>
+  <div class="pad">
+    <div class="grp">
+      <button class="pb lr" id="bL">◀<small>يسار</small></button>
+      <button class="pb lr" id="bR">▶<small>يمين</small></button>
+    </div>
+    <div class="hint">لوحة المفاتيح: ↑ أو W ركض • ← → أو A D المسار • مسافة قفز</div>
+    <div class="grp">
+      <button class="pb" id="bJump">قفز<small>مسافة</small></button>
+      <button class="pb" id="bRun">اركض<small>اضغط باستمرار</small></button>
+    </div>
+  </div>
+</div>
+
+<script src="data/peer.js"></script>
+<script>
+const $ = (s) => document.querySelector(s);
+let peer = null, conn = null, team = null, code = '', running = false, wantClose = false, retryT = null;
+function show(id) { document.querySelectorAll('.scr').forEach((e) => e.classList.toggle('on', e.id === id)); }
+try { $('#code').value = localStorage.getItem('borjCtlCode') || ''; } catch (e) {}
+
+function connect() {
+  code = $('#code').value.replace(/\D/g, '');
+  if (code.length !== 4) { $('#m1').textContent = 'الرمز أربعة أرقام'; return; }
+  if (!window.Peer) { $('#m1').textContent = 'ملف data/peer.js غير موجود — انسخوا مجلد اللعبة كاملًا'; return; }
+  try { localStorage.setItem('borjCtlCode', code); } catch (e) {}
+  $('#m1').textContent = '⏳ جارٍ الاتصال…';
+  open_();
+}
+function open_() {
+  clearTimeout(retryT);
+  const go = () => {
+    conn = peer.connect('borj-majd-' + code, { reliable: true, serialization: 'json' });
+    const myConn = conn;
+    const timeout = setTimeout(() => { if (!myConn.open) { $('#m1').textContent = 'لم نجد الشاشة الكبيرة. تأكدوا من الرمز ومن الإنترنت'; try { myConn.close(); } catch (e) {} if (team !== null) schedule(); } }, 9000);
+    myConn.on('open', () => { clearTimeout(timeout); $('#m1').textContent = ''; setConn(true); if (team !== null) { myConn.send({ join: team }); show('play'); } else show('s2'); });
+    myConn.on('data', onData);
+    myConn.on('close', () => { if (myConn === conn) { setConn(false); if (!wantClose) schedule(); } });
+    myConn.on('error', () => {});
+  };
+  if (peer && !peer.destroyed && peer.open) return go();
+  if (peer) try { peer.destroy(); } catch (e) {}
+  peer = new Peer({ debug: 0 });
+  peer.on('open', go);
+  peer.on('error', (e) => {
+    if (e.type === 'peer-unavailable') $('#m1').textContent = 'الرمز غير صحيح أو الشاشة الكبيرة مغلقة';
+    else if (['network', 'server-error', 'socket-error', 'socket-closed', 'browser-incompatible'].includes(e.type)) $('#m1').textContent = 'لا يوجد اتصال بالإنترنت';
+    setConn(false); if (team !== null) schedule();
+  });
+}
+function schedule() { clearTimeout(retryT); retryT = setTimeout(open_, 3000); }
+function setConn(on) { const c = $('#conn'); c.textContent = on ? '● متصل' : '● انقطع الاتصال… نعيد المحاولة'; c.classList.toggle('off', !on); }
+function send(o) { if (conn && conn.open) try { conn.send(o); } catch (e) {} }
+
+function onData(d) {
+  if (d.names) document.querySelectorAll('.tbtn').forEach((b) => (b.querySelector('.tn').textContent = d.names[+b.dataset.t]));
+  if (d.kicked) { team = null; wantClose = true; show('s2'); $('#m2').textContent = 'اتصل جهاز آخر بهذا الصف'; }
+  if (d.s) render(d.s);
+}
+const STATE = { menu: 'انتظروا بدء السباق…', setup: 'انتظروا بدء السباق…', intro: '🎬 استعدّوا… السباق سيبدأ', count: '⏳ استعدّوا!', run: '', handover: '🔁 تسليم الدور للعدّاء التالي', pause: '⏸ اللعبة متوقفة', slowmo: '🏁 خط النهاية!', victory: '' };
+let lastQ = '';
+function render(s) {
+  $('#pname').textContent = s.name || '—';
+  if (s.score !== undefined) $('#pscore').textContent = s.score;
+  if (s.time !== undefined) $('#ptime').textContent = s.time;
+  $('#prunner').textContent = s.hero ? `${s.hero} • العدّاء ${s.relay} من ${s.relays}` : '';
+  let st = STATE[s.state] ?? '';
+  if (s.state === 'run') st = running ? '🏃 انطلق!' : 'اضغطوا «اركض» باستمرار!';
+  if (s.win !== undefined && (s.state === 'victory' || s.state === 'slowmo')) st = s.win > 0 ? '🏆 مبروك! فاز صفّكم' : s.win < 0 ? 'أحسنتم! حظًا أوفر في المرة القادمة' : '🤝 تعادل!';
+  const ps = $('#pstate'); ps.textContent = st; ps.classList.toggle('win', s.win > 0);
+  const q = $('#q');
+  if (s.q && s.state === 'run') {
+    if (lastQ !== s.q) { lastQ = s.q; $('#qq').textContent = s.q; $('#ans').innerHTML = s.a.map((a, k) => `<div data-k="${k}">${a}<small>${['◀ يسار', 'الوسط', 'يمين ▶'][k]}</small></div>`).join(''); }
+    $('#ans').querySelectorAll('div').forEach((el) => el.classList.toggle('cur', +el.dataset.k === s.lane + 1));
+    q.classList.add('on');
+  } else { q.classList.remove('on'); lastQ = ''; }
+}
+
+function setRun(on) { if (running === on) return; running = on; $('#bRun').classList.toggle('down', on); send({ run: on }); }
+function key(k, el) { send({ k }); if (el) { el.classList.add('down'); setTimeout(() => el.classList.remove('down'), 120); } }
+
+$('#connect').onclick = connect;
+$('#code').addEventListener('keydown', (e) => { if (e.key === 'Enter') connect(); });
+document.querySelectorAll('.tbtn').forEach((b) => (b.onclick = () => { team = +b.dataset.t; wantClose = false; $('#m2').textContent = ''; if (conn && conn.open) { send({ join: team }); show('play'); } else { setConn(false); show('play'); open_(); } })); // بعد «اتصل جهاز آخر» يكون الاتصال مغلقًا: نعيد الاتصال بدل البقاء معلّقين
+
+const run = $('#bRun');
+run.addEventListener('pointerdown', (e) => { e.preventDefault(); try { run.setPointerCapture(e.pointerId); } catch (x) {} setRun(true); });
+['pointerup', 'pointercancel', 'lostpointercapture'].forEach((ev) => run.addEventListener(ev, () => setRun(false)));
+[['#bL', 'L'], ['#bR', 'R'], ['#bJump', 'J']].forEach(([id, k]) => $(id).addEventListener('pointerdown', (e) => { e.preventDefault(); key(k, $(id)); }));
+document.addEventListener('contextmenu', (e) => e.preventDefault());
+
+const RUNK = ['ArrowUp', 'KeyW'], LK = ['ArrowLeft', 'KeyA'], RK = ['ArrowRight', 'KeyD'], JK = ['Space', 'Enter', 'NumpadEnter'];
+addEventListener('keydown', (e) => {
+  if (!$('#play').classList.contains('on')) return;
+  if ([...RUNK, ...LK, ...RK, ...JK, 'ArrowDown'].includes(e.code)) e.preventDefault();
+  if (RUNK.includes(e.code)) return setRun(true);
+  if (e.repeat) return;
+  if (LK.includes(e.code)) key('L', $('#bL'));
+  else if (RK.includes(e.code)) key('R', $('#bR'));
+  else if (JK.includes(e.code)) key('J', $('#bJump'));
+});
+addEventListener('keyup', (e) => { if (RUNK.includes(e.code)) setRun(false); });
+addEventListener('blur', () => setRun(false));
+document.addEventListener('visibilitychange', () => { if (document.hidden) setRun(false); });
+</script>
+</body>
+</html>
