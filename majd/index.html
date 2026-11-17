@@ -202,6 +202,21 @@
 #voicePanel .vrow .vn { flex: 1; }
 #voicePanel button { font: inherit; font-size: 18px; padding: 8px 14px; border-radius: 12px; border: 2px solid var(--gold); background: #000; color: #fff; cursor: pointer; }
 #voicePanel .use { background: #0a7d3b; }
+
+/* طلب المعلمة: السؤال في الوسط أعلى الشاشة، والوقت أمام اسم العدّاء، والأزرار خارج مكان اللعب */
+body.split .timer { display: none !important; }
+.hud.r, .hud.l { padding-left: 18px !important; padding-right: 18px !important; }
+.hud .row { position: relative; z-index: 2; }
+.hud .q { position: absolute; top: 8px; left: 50%; transform: translateX(-50%); width: min(92%, 600px); margin: 0 !important; padding: 0 !important; }
+.hud .q .qq { font-size: min(32px,4.2vh) !important; }
+.hud .row > div:first-child, .hud .score { position: relative; z-index: 3; }
+.hud.r .row, .hud.l .row { margin-top: calc(min(32px,4.2vh) * 1.6 + min(30px,3.8vh) * 1.5 + 70px); transition: margin .3s; }
+.hud:not(:has(.q.on)) .row { margin-top: 0; }
+.hud .rt { display: inline-block; margin-inline-start: 8px; padding: 0 10px; border-radius: 10px; background: var(--gold); color: #1b1206; font-weight: 900; font-size: 24px; }
+.hud .rt.low { background: #c8102e; color: #fff; animation: pulse 1s infinite; }
+.ctrls { top: auto !important; bottom: 6px !important; flex-direction: row !important; width: auto !important; gap: 6px !important; opacity: .75; }
+.ctrls:hover { opacity: 1; }
+.ctrls button { font-size: 13px !important; padding: 3px 8px !important; }
 </style>
 </head>
 <body>
