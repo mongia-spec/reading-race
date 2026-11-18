@@ -253,7 +253,8 @@ canvas#c { height: 100%; width: 100%; }
 #nav.game { padding: 4px 6px; gap: 6px; opacity: .85; }
 #nav.game button { padding: 4px 10px; font-size: 18px; min-height: 44px; }
 #nav.game button b { display: none; }
-#nav.game #nvPause b { display: inline; font-size: 15px; }
+#nav.game #nvPause b, #nav.game #nvEnd b { display: inline; font-size: 15px; }
+#nvEnd { background: #8a0f22 !important; border-color: #ffb4b4 !important; color: #fff !important; }
 body.split .hud .keys { bottom: 64px; }
 body.split .hud .tip { bottom: 100px; }
 /* اختيار الوضع */
@@ -265,6 +266,7 @@ body.split .hud .tip { bottom: 100px; }
 #modesteps .code { direction: ltr; unicode-bidi: isolate; color: #40e0d0; font-size: 1.4em; font-weight: 900; letter-spacing: .2em; }
 .padurl { color: #7dffd8; word-break: break-all; unicode-bidi: isolate; }
 /* نافذة التأكيد */
+#endbtn { background: #8a0f22 !important; border-color: #ffb4b4 !important; color: #fff !important; }
 #confirmBox { position: fixed; inset: 0; z-index: 70; display: none; align-items: center; justify-content: center; background: rgba(0,0,0,.7); }
 #confirmBox.on { display: flex; }
 #confirmBox .box { width: min(640px, 92vw); padding: 24px; border-radius: 22px; background: #2a1d0c; border: 3px solid var(--gold); text-align: center; font-size: min(26px,4vh); line-height: 1.6; }
@@ -389,7 +391,7 @@ body.touch.split .hud .keys { display: none; }
   #cq { top: 200px !important; width: 66vw !important; } #cq .cqq { font-size: 5.2vh !important; } #cq .cqo b { font-size: 4.4vh !important; }
   #cq .cqo small, #cq .mk i, #cq .cqt { font-size: 2.4vh !important; } #cq.two { width: 96vw !important; } #cq.two .cqq { font-size: 4.2vh !important; }
   #nav { padding: 12px 16px; gap: 16px; border-radius: 40px; } #nav button { font-size: 44px; min-height: 88px; padding: 10px 28px; border-radius: 28px; } #nav button b { font-size: 34px; }
-  #nav.game button { font-size: 38px; min-height: 80px; } #nav.game #nvPause b { font-size: 30px; }
+  #nav.game button { font-size: 38px; min-height: 80px; } #nav.game #nvPause b, #nav.game #nvEnd b { font-size: 30px; }
   .big { font-size: 360px; } .caption { font-size: 88px; } .caption small { font-size: 56px; } #goflag { width: 420px; height: 260px; }
   #title h2 { font-size: 68px; } #title .floor { font-size: 56px; } .btn { font-size: 64px !important; padding: 28px 90px; } .btn2, .big2 { font-size: 46px !important; }
   .hint { font-size: 38px; } .modeb { font-size: 44px; padding: 16px 32px; } #modesteps { font-size: 36px; max-width: 70vw; }
@@ -458,13 +460,13 @@ body.touch.split .hud .keys { display: none; }
 <div class="hud l" id="hud1"><div class="row"><div><div class="name"></div><div class="runner"></div></div><div class="score">0</div></div><div class="q"></div><div class="fx"></div><div class="tip"></div><div class="keys">W اركض  •  A D المسار  •  مسافة قفز</div><div class="netst netst1"></div></div>
 <div id="cq"></div>
 <div class="timer"><small>وقت العدّاء</small><span id="timer">40</span></div>
-<div class="ctrls"><button id="pausebtn" title="إيقاف (P)">⏸ إيقاف</button><button class="mutebtn" title="(M)">🔊 الصوت يعمل</button><button class="fsb">⛶ ملء الشاشة</button></div>
+<div class="ctrls"><button id="endbtn" title="إنهاء المباراة">⏹ إنهاء اللعبة</button><button id="pausebtn" title="إيقاف (P)">⏸ إيقاف</button><button class="mutebtn" title="(M)">🔊 الصوت يعمل</button><button class="fsb">⛶ ملء الشاشة</button></div>
 <div class="center"><div class="big" id="big"></div><div id="goflag" aria-hidden="true"><i></i><i></i><i></i><s></s></div></div>
 <div class="tpad r" data-t="0"><div class="tg"><button data-k="L" aria-label="يسار">◀</button><button data-k="R" aria-label="يمين">▶</button></div><div class="tg"><button data-k="J">⤒<small>قفز</small></button><button data-k="RUN" class="run">🏃<small>اركض</small></button></div></div>
 <div class="tpad l" data-t="1"><div class="tg"><button data-k="L" aria-label="يسار">◀</button><button data-k="R" aria-label="يمين">▶</button></div><div class="tg"><button data-k="J">⤒<small>قفز</small></button><button data-k="RUN" class="run">🏃<small>اركض</small></button></div></div>
 <nav id="nav" style="display:none">
   <button id="nvBack">↩<b>رجوع</b></button><button id="nvHome">🏠<b>الرئيسية</b></button><button id="nvFloors">🏢<b>اختر الطابق</b></button>
-  <button id="nvStart" class="go">▶<b>ابدأ</b></button><button id="nvPause">⏸<b>إيقاف مؤقت</b></button><button id="nvResume" class="go">⏵<b>إكمال</b></button>
+  <button id="nvStart" class="go">▶<b>ابدأ</b></button><button id="nvPause">⏸<b>إيقاف مؤقت</b></button><button id="nvEnd" class="end">⏹<b>إنهاء اللعبة</b></button><button id="nvResume" class="go">⏵<b>إكمال</b></button>
   <button id="nvRestart">↻<b>أعِد المباراة</b></button><button id="nvTourNew">⏮<b>ابدأ البطولة من جديد</b></button>
   <button id="nvFS">⛶<b>ملء الشاشة</b></button><button id="nvSound">🔊<b>الأصوات</b></button><button id="nvSong">🎵<b>الأغنية</b></button>
 </nav>
@@ -535,6 +537,7 @@ body.touch.split .hud .keys { display: none; }
 <div class="screen" id="pausescr">
   <h2>اللعبة متوقفة</h2>
   <button class="btn" id="resume">▶ متابعة</button>
+  <button class="btn2" id="endbtn2">⏹ إنهاء اللعبة والعودة إلى الرئيسية</button>
   <div class="prow"><button class="btn2" id="restart">↻ إعادة المباراة</button><button class="btn2" id="menu">⌂ القائمة الرئيسية</button><button class="btn2 mutebtn">🔊 الصوت يعمل</button><button class="btn2 fsb">⛶ ملء الشاشة</button></div>
   <div class="hint">اضغط P أو Esc للإيقاف والمتابعة • M لإغلاق الصوت</div>
   <div class="hint" id="perf"></div>
@@ -553,7 +556,7 @@ body.touch.split .hud .keys { display: none; }
 <script src="data/models_anim_razha.js"></script>
 <script src="data/models_anim_wave_climb.js"></script>
 <script src="data/music_boy.js"></script>
-<script src="data/code.js?v=1794992854"></script>
+<script src="data/code.js?v=1794993305"></script>
 <script>
 (function(){
   var M=window.__MODS, map={imports:{}};
