@@ -448,6 +448,27 @@ body.touch.split .hud .keys { display: none; }
   #cq .cqo { background: rgba(255,255,255,.10) !important; border-color: rgba(255,255,255,.45); }
   #cq .cqo.cur { background: rgba(255,211,74,.22) !important; }
 }
+
+/* ═════ طلب المعلّمة (18 نوفمبر): السؤال صغير وشفاف أعلى الشاشة فلا يغطّي الممشى ═════ */
+#cq, #cq.two { top: 92px !important; }
+#cq { width: min(56vw, 900px) !important; }
+#cq.two { width: 94vw !important; gap: 4vw !important; }
+#cq .cqb, #cq.two .cqb { background: transparent !important; border: none !important; box-shadow: none !important; padding: 0 !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+#cq .cqq { font-size: min(28px, 3.1vh) !important; line-height: 1.4 !important; color: #fff !important; -webkit-text-stroke: 0 !important;
+  text-shadow: 0 0 2px #000, 0 0 4px #000, 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000 !important; }
+#cq .cqa { gap: 8px !important; margin-top: 4px !important; }
+#cq .cqo { background: rgba(0,0,0,.18) !important; border: 2px solid rgba(255,255,255,.55) !important; border-radius: 12px !important; padding: 2px 6px !important; }
+#cq .cqo[data-k="1"] { background: rgba(0,0,0,.18) !important; }
+#cq .cqo.cur { border-color: #ffd34a !important; box-shadow: 0 0 10px rgba(255,211,74,.6) !important; transform: scale(1.03); }
+#cq .cqo b { font-size: min(22px, 2.5vh) !important; color: #fff !important; -webkit-text-stroke: 0 !important; text-shadow: 0 0 2px #000, 0 0 4px #000, 1px 1px 0 #000, -1px -1px 0 #000 !important; }
+#cq .cqo small { font-size: min(13px, 1.5vh) !important; text-shadow: 0 0 2px #000, 1px 1px 0 #000 !important; }
+#cq .cqt { font-size: min(16px, 1.9vh) !important; }
+#cq .mk i { font-size: min(12px, 1.4vh) !important; }
+#cq.two .cqq { font-size: min(24px, 2.7vh) !important; }
+#cq.two .cqo b { font-size: min(19px, 2.2vh) !important; }
+@media (min-width: 3000px) { #cq, #cq.two { top: 190px !important; } #cq .cqq { font-size: 3.1vh !important; } #cq .cqo b { font-size: 2.5vh !important; } #cq.two .cqq { font-size: 2.7vh !important; } #cq.two .cqo b { font-size: 2.2vh !important; } #cq .cqo small, #cq .mk i, #cq .cqt { font-size: 1.5vh !important; } }
+@media (max-height: 500px) { #cq, #cq.two { top: 50px !important; } #cq .cqq { font-size: 13px !important; } #cq .cqo b { font-size: 12px !important; } #cq .cqo small, #cq .mk i, #cq .cqt { font-size: 9px !important; } }
+@media (orientation: portrait) and (max-width: 700px) { #cq, #cq.two { top: 64px !important; width: 96vw !important; } #cq .cqq { font-size: 15px !important; } #cq .cqo b { font-size: 13px !important; } }
 </style>
 </head>
 <body>
@@ -556,8 +577,8 @@ body.touch.split .hud .keys { display: none; }
 <script src="data/models_anim_razha.js"></script>
 <script src="data/models_anim_wave_climb.js"></script>
 <script src="data/music_boy.js"></script>
-<script src="data/vox.js?v=1795006746"></script>
-<script src="data/code.js?v=1795007033"></script>
+<script src="data/vox.js?v=1795025891"></script>
+<script src="data/code.js?v=1795025891"></script>
 <script>
 (function(){
   var M=window.__MODS, map={imports:{}};
