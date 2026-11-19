@@ -34,7 +34,13 @@ function resize() { renderer.setSize(innerWidth, innerHeight, false); camera.asp
 addEventListener('resize', resize); resize();
 
 let scene = null, world = null;
+try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch { /* */ }
 const audio = createAudio();
+// على آيفون/آيباد: مستوى صوت عنصر <audio> لا يتغيّر برمجيًا، و Web Audio يُكتم بزر الصامت؛ لذلك يُشغَّل الراوي هناك عبر عنصر صوت واحد يُفتح بأول لمسة
+const VOL_RO = (() => { try { const t = new Audio(); t.volume = 0.5; return t.volume !== 0.5; } catch { return false; } })() || /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+const VOEL = new Audio(); VOEL.setAttribute('playsinline', ''); VOEL.preload = 'auto';
+let voElReady = false;
+document.addEventListener('pointerdown', () => { if (voElReady) return; voElReady = true; try { VOEL.src = 'audio/silence.mp3'; VOEL.play().then(() => VOEL.pause()).catch(() => {}); } catch { /* */ } }, true);
 // على آيفون/آيباد: زر الصامت يكتم Web Audio؛ تشغيل مقطع صامت متكرر داخل لمسة المستخدم يجعل الجهاز يعامل اللعبة كوسائط فيُسمع الصوت
 const _unlock0 = audio.unlock.bind(audio); let _keep = null;
 audio.unlock = () => {
@@ -328,8 +334,9 @@ function say(id, text, who, actorKey) { window.__lastVO = id;
     skipLine = fin;
     if (hasVoice) {
       const ctx0 = audio.ctx; if (ctx0.state !== 'running') ctx0.resume().catch(() => {});
-      const viaTag = () => { const a = new Audio('audio/vo/' + file); a.setAttribute('playsinline', ''); a.onended = fin; a.onerror = () => setTimeout(fin, readMs(text)); voSrc = { stop: () => a.pause(), set onended(v) { a.onended = v; } }; a.play().catch(() => setTimeout(fin, readMs(text))); };
-      if (ctx0.state !== 'running') { setTimeout(() => { if (done) return; if (audio.ctx.state === 'running') playBuf(); else viaTag(); }, 250); }
+      const viaTag = () => { const a = VOL_RO ? VOEL : new Audio('audio/vo/' + file); if (VOL_RO) { a.onended = null; a.onerror = null; a.src = 'audio/vo/' + file; } a.setAttribute('playsinline', ''); a.onended = fin; a.onerror = () => setTimeout(fin, readMs(text)); voSrc = { stop: () => a.pause(), set onended(v) { a.onended = v; } }; a.play().catch(() => setTimeout(fin, readMs(text))); };
+      if (VOL_RO) viaTag();
+      else if (ctx0.state !== 'running') { setTimeout(() => { if (done) return; if (audio.ctx.state === 'running') playBuf(); else viaTag(); }, 250); }
       else playBuf();
       function playBuf() { voBuffer(file).then((buf) => {
         if (done) return; const ctx = audio.ctx; const src = ctx.createBufferSource(); src.buffer = buf;
@@ -359,6 +366,7 @@ function songTo(vol, from) {
   if (vol > 0 && SONG.paused && !muted && !songOff) SONG.play().catch(() => {});
 }
 setInterval(() => {
+  if (VOL_RO) { const on = !muted && !songOff && songWant > 0 && !songDuck; if (!on && !SONG.paused) SONG.pause(); else if (on && SONG.paused) SONG.play().catch(() => {}); return; }
   const tgt = (muted || songOff) ? 0 : songWant * SONG_GAIN * (songDuck ? SONG_DUCK : 1); const v = SONG.volume;
   const step = (songDuck && tgt < v) ? 0.1 : 0.04;
   SONG.volume = Math.abs(tgt - v) < step ? tgt : v + Math.sign(tgt - v) * step;
