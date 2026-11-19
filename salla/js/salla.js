@@ -357,7 +357,7 @@ const SONG = new Audio('audio/song.mp3'); SONG.preload = 'auto'; SONG.loop = tru
 let songWant = 0; let songDuck = false; // تخفيض الأغنية تلقائيًا أثناء كلام الشخصيات
 const SONG_GAIN = 0.8, SONG_DUCK = 0.25;
 let songOff = (() => { try { return localStorage.getItem('salla_song_off') === '1'; } catch (e) { return false; } })();
-function songBtns() { for (const id of ['bSong', 'songFab']) { const b = document.getElementById(id); if (b) { b.textContent = songOff ? '🎵✕' : '🎵'; b.title = songOff ? 'تشغيل الأغنية' : 'إيقاف الأغنية'; } } }
+function songBtns() { for (const id of ['bSong', 'songFab']) { const b = document.getElementById(id); if (b) { b.textContent = id === 'songFab' ? (songOff ? '🎵 تشغيل الأغنية' : '🔇 إيقاف الأغنية') : (songOff ? '🎵✕' : '🎵'); b.title = songOff ? 'تشغيل الأغنية' : 'إيقاف الأغنية'; } } }
 function toggleSong() { songOff = !songOff; try { localStorage.setItem('salla_song_off', songOff ? '1' : '0'); } catch (e) {} songBtns(); if (songOff) { SONG.pause(); SONG.volume = 0; } else if (songWant > 0) SONG.play().catch(() => {}); }
 setTimeout(() => { for (const id of ['bSong', 'songFab']) { const b = document.getElementById(id); if (b) b.onclick = (e) => { e.stopPropagation(); toggleSong(); }; } songBtns(); }, 0);
 function songTo(vol, from) {

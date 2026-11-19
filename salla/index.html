@@ -206,6 +206,10 @@ table.lb tr.win td{color:var(--gold2);font-weight:700}
 .credit a{color:#fff;text-decoration:none;background:#0008;border:1.5px solid var(--gold2);border-radius:999px;padding:4px 14px;font-weight:700}
 #hud:not(.on) ~ #wm{display:none}
 #songFab{position:fixed;top:max(10px,env(safe-area-inset-top));left:max(10px,env(safe-area-inset-left));z-index:60;cursor:pointer;font-size:clamp(18px,2vw,26px);background:#0b2e2bdd;color:#fff;border:2px solid var(--gold2);border-radius:999px;padding:6px 14px;user-select:none}
+#fabs{position:fixed;top:max(10px,env(safe-area-inset-top));left:max(10px,env(safe-area-inset-left));z-index:60;display:flex;gap:8px}
+#fabs #songFab{position:static}
+#fullFab{cursor:pointer;font-size:clamp(16px,1.7vw,22px);background:#0b2e2bdd;color:#fff;border:2px solid var(--gold2);border-radius:999px;padding:6px 14px;user-select:none;font-weight:700}
+#hud.on ~ #fabs{display:none}
 #hud.on ~ #songFab{display:none}
 #wm{position:fixed;left:50%;bottom:max(4px,env(safe-area-inset-bottom));transform:translateX(-50%);z-index:11;pointer-events:none;font-size:clamp(10px,1vw,13px);color:#fff;opacity:.85;background:#0006;padding:1px 10px;border-radius:999px;text-shadow:0 1px 3px #000;white-space:nowrap;direction:rtl}
 </style>
@@ -302,7 +306,7 @@ table.lb tr.win td{color:var(--gold2);font-weight:700}
   <div id="sub"></div>
   <div id="toast"></div>
 </div>
-<div id="topBtns"><div class="ibtn" id="bMute" title="الصوت">🔊</div><div class="ibtn" id="bSong" title="إيقاف الأغنية">🎵</div><div class="ibtn" id="bPause" title="إيقاف مؤقت">⏸</div><div class="ibtn" id="bRepeat" title="أعد قراءة السؤال">🔁</div><div class="ibtn" id="bRestart" title="ابدأ الجولة من جديد">⟲</div><div class="ibtn" id="bExit" title="إنهاء والعودة للقائمة">🏠</div></div>
+<div id="topBtns"><div class="ibtn" id="bMute" title="الصوت">🔊</div><div class="ibtn" id="bSong" title="إيقاف الأغنية">🎵</div><div class="ibtn fsBtn" id="bFull" title="ملء الشاشة">⛶</div><div class="ibtn" id="bPause" title="إيقاف مؤقت">⏸</div><div class="ibtn" id="bRepeat" title="أعد قراءة السؤال">🔁</div><div class="ibtn" id="bRestart" title="ابدأ الجولة من جديد">⟲</div><div class="ibtn" id="bExit" title="إنهاء والعودة للقائمة">🏠</div></div>
 
 <div id="pad">
   <div class="cbtn" id="bL"><svg viewBox="0 0 24 24"><path d="M15.5 3.5 7 12l8.5 8.5 2-2L11 12l6.5-6.5z"/></svg><span class="lbl">يسار</span></div>
@@ -312,13 +316,18 @@ table.lb tr.win td{color:var(--gold2);font-weight:700}
   <div class="cbtn" id="bStop"><svg viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/></svg><span class="lbl">قف</span></div>
 </div>
 
-<script type="module" src="js/salla.js?v=1795062032"></script>
+<script type="module" src="js/salla.js?v=1795064182"></script>
 
-<div id="songFab" title="إيقاف الأغنية">🎵</div>
+<div id="fabs"><div id="songFab" title="إيقاف الأغنية">🎵</div><div id="fullFab" class="fsBtn" title="ملء الشاشة">⛶ ملء الشاشة</div></div>
 <!-- حقوق الملكية -->
 <div id="wm">© الأستاذة منجية عادل • إنستغرام ‎@ostatha.mongia • يوتيوب ‎@shtshout</div>
 <template id="creditTpl"><div class="credit">© 2026 جميع الحقوق محفوظة للمؤلِّفة <b>الأستاذة منجية عادل</b><br>فكرة اللعبة وقصتها وتصميمها وإعدادها: الأستاذة منجية عادل — يُمنع نسخها أو بيعها أو نسبتها لغيرها دون إذن منها
 <div class="lk"><a href="https://www.instagram.com/ostatha.mongia/" target="_blank" rel="noopener">📸 إنستغرام ‎@ostatha.mongia</a><a href="https://www.youtube.com/@shtshout" target="_blank" rel="noopener">▶️ يوتيوب ‎@shtshout</a></div></div></template>
 <script>document.querySelectorAll('.screen,#loading').forEach(function(e){e.appendChild(document.getElementById('creditTpl').content.cloneNode(true));});</script>
+<script>(function(){function fs(){var d=document,e=d.documentElement;try{if(d.fullscreenElement||d.webkitFullscreenElement){(d.exitFullscreen||d.webkitExitFullscreen).call(d)}else{(e.requestFullscreen||e.webkitRequestFullscreen).call(e)}}catch(x){}}
+function lbl(){var on=!!(document.fullscreenElement||document.webkitFullscreenElement);var f=document.getElementById('fullFab');if(f)f.textContent=on?'⛶ خروج من ملء الشاشة':'⛶ ملء الشاشة';}
+document.querySelectorAll('.fsBtn').forEach(function(b){b.addEventListener('click',function(ev){ev.stopPropagation();fs();});});
+document.addEventListener('fullscreenchange',lbl);document.addEventListener('webkitfullscreenchange',lbl);
+if(!(document.documentElement.requestFullscreen||document.documentElement.webkitRequestFullscreen))document.querySelectorAll('.fsBtn').forEach(function(b){b.style.display='none'});})();</script>
 </body>
 </html>
