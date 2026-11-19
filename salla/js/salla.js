@@ -4,7 +4,7 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import * as SkeletonUtils from 'three/addons/utils/SkeletonUtils.js';
 import { BANK } from './bank.js';
-import { createWorld } from './world.js';
+import { createWorld } from './world.js?v=1795079040';
 import { createAudio } from './music.js';
 import { HEROES, GRADES, COMMON, STORY, GATE_COLORS, WHO, THINK, THINK_COMMON, lineText, lineId, optionOrder, stripEmoji } from './story.js';
 
@@ -480,7 +480,7 @@ function buildIntroSet() {
   const sun = new THREE.DirectionalLight('#ffe0b0', 2.4); sun.position.set(5, 8, 6); sun.castShadow = true;
   sun.shadow.mapSize.set(1024, 1024); Object.assign(sun.shadow.camera, { left: -4, right: 4, top: 4, bottom: -4, near: 0.5, far: 30 }); sc.add(sun);
   const ground = new THREE.Mesh(new THREE.PlaneGeometry(14, 14), new THREE.ShadowMaterial({ opacity: 0.38 })); ground.rotation.x = -Math.PI / 2; ground.receiveShadow = true; sc.add(ground);
-  if (!villageTex) { villageTex = new THREE.TextureLoader().load('img/village_intro.jpg'); villageTex.colorSpace = THREE.SRGBColorSpace; villageTex.anisotropy = 4; }
+  if (!villageTex) { villageTex = new THREE.TextureLoader().load('img/village_intro.jpg?v=1795079040'); villageTex.colorSpace = THREE.SRGBColorSpace; villageTex.anisotropy = 4; }
   const back = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.MeshBasicMaterial({ map: villageTex, toneMapped: false, depthWrite: false }));
   back.renderOrder = -1; sc.add(back);
   return { sc, back };

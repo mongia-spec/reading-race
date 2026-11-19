@@ -496,12 +496,14 @@ export function createWorld(THREE, scene, renderer, grade = 1) {
     b.add(cylG(8, 1.2), mat4(x, y + 0.75 * s, z, 0.16 * s, 0.22 * s, 0.16 * s, 0, 0, 0, F), c);
   }
   function flagPole(x, z, h = 6, o = {}) {
+    return; // بطلب الأستاذة منجية: لا أعلام في اللعبة (التزامًا بتعليمات الوزارة)
     const S = at(z), y0 = o.y ?? gy(x, z), b = pb(S, x), sz = o.size || 1, ry = o.ry ?? (x < 0 ? -0.4 : PI + 0.4);
     b.add(cylG(6, 0.6), mat4(x, y0 - 0.2, z, 0.06, h + 0.2, 0.06), col('#e8e2d6'));
     b.add(G.sph, mat4(x, y0 + h + 0.05, z, 0.11, 0.11, 0.11), PAL.gold);
     S.d.add(G.flag, mat4(x, y0 + h - 0.08, z, 1.7 * sz, 0.95 * sz, 1, ry), WHITE, lx => [0, 0.12 * Math.pow(lx + 0.5, 1.4) * sz, 0], UV.flag);
   }
   function roofFlag(S, F, x, y, z, h = 2.5, ry = 0, sz = 1) {
+    return; // لا أعلام
     S.p.add(cylG(6, 0.6), mat4(x, y, z, 0.05, h, 0.05, 0, 0, 0, F), col('#e8e2d6'));
     S.d.add(G.flag, mat4(x, y + h - 0.05, z, 1.3 * sz, 0.72 * sz, 1, ry, 0, 0, F), WHITE, lx => [0, 0.1 * sz * Math.pow(lx + 0.5, 1.4), 0], UV.flag);
   }
@@ -672,7 +674,6 @@ export function createWorld(THREE, scene, renderer, grade = 1) {
     b.add(G.box, mat4(0, len * 0.085, -len * 0.3, len * 0.22, len * 0.06, len * 0.25, 0, 0, 0, F), wc, wv);
     b.add(cylG(6, 0.6), mat4(0, len * 0.05, len * 0.05, 0.16, len * 0.75, 0.16, 0, -0.12, 0, F), PAL.wood, wv);
     b.add(G.sail, mat4(0, len * 0.2, len * 0.42, 1, len * 0.62, len * 0.72, -PI / 2, 0, -0.08, F), col('#efe4cc'), (lx) => [0, 0.08 * lx, 1.2]);
-    S.d.add(G.flag, mat4(0, len * 0.8, len * 0.02, 1.4, 0.8, 1, PI / 2, 0, 0, F), WHITE, lx => [0, 0.1 * (lx + 0.5), 1.2], UV.flag);
     const p1 = new Vector3(0, len * 0.78, len * 0.05).applyMatrix4(F), p2 = new Vector3(0, len * 0.12, -len * 0.48).applyMatrix4(F);
     bunting(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z, 0.3);
   }
