@@ -580,13 +580,13 @@ body.touch.split .hud .keys { display: none; }
 <script src="data/models_anim_wave_climb.js"></script>
 <script src="data/music_boy.js"></script>
 <script src="data/vox.js?v=1795025891"></script>
-<script src="data/code.js?v=1795079188"></script>
+<script src="data/code.js?v=1795201027"></script>
 <script>
 (function(){
   var M=window.__MODS, map={imports:{}};
   for (var k in M) map.imports[k]=URL.createObjectURL(new Blob([M[k]],{type:'text/javascript'}));
   var s=document.createElement('script'); s.type='importmap'; s.textContent=JSON.stringify(map); document.head.appendChild(s);
-  import(map.imports['game/main']).catch(function(e){ document.getElementById('loadtxt').textContent='خطأ في التشغيل: '+e.message; });
+  import(map.imports['game/main']).catch(function(e){ var L=document.getElementById('loadtxt'); if(/WEBGL|WebGL/i.test(e.message)){ L.style.whiteSpace='normal'; L.style.lineHeight='1.8'; L.innerHTML='جهازك أو المتصفح لم يسمح بتشغيل الرسوم ثلاثية الأبعاد.<br>1) إن فتحتَ الرابط من داخل إنستغرام: اضغط ⋯ في الأعلى ثم «فتح في المتصفح» (Safari أو Chrome).<br>2) أغلق التبويبات الأخرى في المتصفح ثم أعد فتح الرابط.<br>3) جرّبها على الحاسوب أو السبورة الذكية، فهي مصمّمة لها.'; } else L.textContent='خطأ في التشغيل: '+e.message; });
 })();
 </script>
 
